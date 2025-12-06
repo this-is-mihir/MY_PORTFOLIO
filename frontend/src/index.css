@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+
+
+
+/* 
+.card-content {
+  @apply absolute w-[calc(100%-4px)] h-[calc(100%-4px)] top-[2px] left-[2px]  bg-gradient-to-b from-gray-950 to-gray-900 hover:bg-gradient-to-t hover:from-gray-950 hover:to-gray-900 hover:text-primary rounded-2xl   duration-200;
+} */
