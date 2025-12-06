@@ -6,6 +6,10 @@ const API_BASE_URL = "http://localhost:5000"; // ⚠️ deploy par change karna
 export default function Curriculum() {
   const [data, setData] = useState({ education: [], experience: [] });
 
+  // ✅ NEW: per-card expand state
+  const [expandedEdu, setExpandedEdu] = useState({});
+  const [expandedExp, setExpandedExp] = useState({});
+
   useEffect(() => {
     const fetchCurriculum = async () => {
       try {
@@ -23,6 +27,12 @@ export default function Curriculum() {
   }, []);
 
   const { education, experience } = data;
+
+  // ✅ NEW: helper to create preview text
+  const getPreview = (text = "", limit = 140) => {
+    if (!text) return "";
+    return text.length > limit ? text.slice(0, limit) + "..." : text;
+  };
 
   return (
     <section
@@ -89,58 +99,81 @@ export default function Curriculum() {
               {/* Vertical line */}
               <div className="absolute left-3 sm:left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-sky-400 to-sky-200" />
 
-              {education.map((item, index) => (
-                <motion.div
-                  key={item._id || `edu-${index}`}
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.55, delay: index * 0.12 }}
-                  whileHover={{
-                    y: -4,
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
-                    backgroundColor: "rgba(255,255,255,1)",
-                    borderColor: "rgba(56,189,248,0.7)",
-                  }}
-                  className="relative mb-10"
-                >
-                  {/* Dot */}
+              {education.map((item, index) => {
+                const key = item._id || index;
+                const fullText = item.details || "";
+                const isExpanded = !!expandedEdu[key];
+                const showToggle = fullText.length > 140;
+
+                return (
                   <motion.div
-                    animate={{ scale: [1, 1.18, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-sky-500 shadow-[0_0_0_6px_rgba(56,189,248,0.25)]"
-                  />
-
-                  {/* Card */}
-                  <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="text-lg font-semibold">{item.degree}</h4>
-                      <span className="text-xs bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-3 py-1">
-                        {item.year}
-                      </span>
-                    </div>
-                    <p className="font-medium text-slate-600 mt-1">
-                      {item.institution}
-                    </p>
-
-                    {/* moving line */}
+                    key={key}
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, delay: index * 0.12 }}
+                    whileHover={{
+                      y: -4,
+                      scale: 1.02,
+                      boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
+                      backgroundColor: "rgba(255,255,255,1)",
+                      borderColor: "rgba(56,189,248,0.7)",
+                    }}
+                    className="relative mb-10"
+                  >
+                    {/* Dot */}
                     <motion.div
-                      className="h-[2px] w-12 bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full my-3"
-                      animate={{ x: [0, 8, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 1.6,
-                        ease: "easeInOut",
-                      }}
+                      animate={{ scale: [1, 1.18, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-sky-500 shadow-[0_0_0_6px_rgba(56,189,248,0.25)]"
                     />
 
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {item.details}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                    {/* Card */}
+                    <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h4 className="text-lg font-semibold">{item.degree}</h4>
+                        <span className="text-xs bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-3 py-1">
+                          {item.year}
+                        </span>
+                      </div>
+                      <p className="font-medium text-slate-600 mt-1">
+                        {item.institution}
+                      </p>
+
+                      {/* moving line */}
+                      <motion.div
+                        className="h-[2px] w-12 bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full my-3"
+                        animate={{ x: [0, 8, 0] }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.6,
+                          ease: "easeInOut",
+                        }}
+                      />
+
+                      {/* ✅ Truncated + Read more */}
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {isExpanded ? fullText : getPreview(fullText)}
+                      </p>
+
+                      {showToggle && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedEdu((prev) => ({
+                              ...prev,
+                              [key]: !isExpanded,
+                            }))
+                          }
+                          className="mt-2 text-xs sm:text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline"
+                        >
+                          {isExpanded ? "Read less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 
@@ -156,58 +189,81 @@ export default function Curriculum() {
               {/* Vertical line */}
               <div className="absolute left-3 sm:left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-indigo-400 to-indigo-200" />
 
-              {experience.map((exp, index) => (
-                <motion.div
-                  key={exp._id || `exp-${index}`}
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.55, delay: index * 0.12 }}
-                  whileHover={{
-                    y: -4,
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
-                    backgroundColor: "rgba(255,255,255,1)",
-                    borderColor: "rgba(129,140,248,0.7)",
-                  }}
-                  className="relative mb-10"
-                >
-                  {/* Dot */}
+              {experience.map((exp, index) => {
+                const key = exp._id || index;
+                const fullText = exp.details || "";
+                const isExpanded = !!expandedExp[key];
+                const showToggle = fullText.length > 140;
+
+                return (
                   <motion.div
-                    animate={{ scale: [1, 1.18, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-indigo-500 shadow-[0_0_0_6px_rgba(129,140,248,0.25)]"
-                  />
-
-                  {/* Card */}
-                  <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <h4 className="text-lg font-semibold">{exp.title}</h4>
-                      <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-3 py-1">
-                        {exp.years}
-                      </span>
-                    </div>
-                    <p className="font-medium text-slate-600 mt-1">
-                      {exp.tech}
-                    </p>
-
-                    {/* moving line */}
+                    key={key}
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.55, delay: index * 0.12 }}
+                    whileHover={{
+                      y: -4,
+                      scale: 1.02,
+                      boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
+                      backgroundColor: "rgba(255,255,255,1)",
+                      borderColor: "rgba(129,140,248,0.7)",
+                    }}
+                    className="relative mb-10"
+                  >
+                    {/* Dot */}
                     <motion.div
-                      className="h-[2px] w-12 bg-gradient-to-r from-indigo-500 to-sky-500 rounded-full my-3"
-                      animate={{ x: [0, 8, 0] }}
-                      transition={{
-                        repeat: Infinity,
-                        duration: 1.6,
-                        ease: "easeInOut",
-                      }}
+                      animate={{ scale: [1, 1.18, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-indigo-500 shadow-[0_0_0_6px_rgba(129,140,248,0.25)]"
                     />
 
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {exp.details}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
+                    {/* Card */}
+                    <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h4 className="text-lg font-semibold">{exp.title}</h4>
+                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-3 py-1">
+                          {exp.years}
+                        </span>
+                      </div>
+                      <p className="font-medium text-slate-600 mt-1">
+                        {exp.tech}
+                      </p>
+
+                      {/* moving line */}
+                      <motion.div
+                        className="h-[2px] w-12 bg-gradient-to-r from-indigo-500 to-sky-500 rounded-full my-3"
+                        animate={{ x: [0, 8, 0] }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1.6,
+                          ease: "easeInOut",
+                        }}
+                      />
+
+                      {/* ✅ Truncated + Read more */}
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {isExpanded ? fullText : getPreview(fullText)}
+                      </p>
+
+                      {showToggle && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setExpandedExp((prev) => ({
+                              ...prev,
+                              [key]: !isExpanded,
+                            }))
+                          }
+                          className="mt-2 text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
+                        >
+                          {isExpanded ? "Read less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </div>
