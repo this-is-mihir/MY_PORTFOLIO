@@ -1,7 +1,96 @@
-import { useContext, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// src/components/Skills.jsx (ya jaha bhi hai)
+
+import { useContext, useState, useRef } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import { Link } from "react-router-dom";
 import { DataContext } from "../context/DataContext";
+
+/* 🧲 Reusable Magnetic + 3D Wrapper */
+function Magnetic3D({
+  children,
+  translateStrength = 18,
+  rotateStrength = 10,
+  className = "",
+  motionProps = {},
+}) {
+  const ref = useRef(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+
+  const springX = useSpring(x, { stiffness: 220, damping: 18 });
+  const springY = useSpring(y, { stiffness: 220, damping: 18 });
+  const springRotateX = useSpring(rotateX, { stiffness: 220, damping: 18 });
+  const springRotateY = useSpring(rotateY, { stiffness: 220, damping: 18 });
+
+  const handleMouseMove = (e) => {
+    const el = ref.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    const relY = e.clientY - rect.top;
+
+    const midX = rect.width / 2;
+    const midY = rect.height / 2;
+
+    const percentX = (relX - midX) / midX; // -1 to 1
+    const percentY = (relY - midY) / midY; // -1 to 1
+
+    x.set(percentX * translateStrength);
+    y.set(percentY * translateStrength);
+
+    rotateX.set(-percentY * rotateStrength);
+    rotateY.set(percentX * rotateStrength);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  // motionProps se style / whileHover alag nikal liye
+  const {
+    style: motionStyle,
+    whileHover: motionWhileHover,
+    ...restMotionProps
+  } = motionProps;
+
+  return (
+    <div style={{ perspective: 1000 }}>
+      <motion.div
+        ref={ref}
+        className={className}
+        style={{
+          x: springX,
+          y: springY,
+          rotateX: springRotateX,
+          rotateY: springRotateY,
+          transformStyle: "preserve-3d",
+          ...motionStyle,
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        whileHover={{
+          scale: 1.03, // subtle rakha jisse jhatka kam lage
+          ...motionWhileHover,
+        }}
+        {...restMotionProps}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
+}
 
 export default function Skills() {
   const { state } = useContext(DataContext);
@@ -63,32 +152,28 @@ export default function Skills() {
 
         {/* Skills Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-7 sm:gap-8">
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout" initial={false}>
             {displayedSkills.map((skill, index) => (
-              <motion.div
+              <Magnetic3D
                 key={skill._id || skill.id || skill.name || `skill-${index}`}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: index * 0.07,
-                  duration: 0.5,
-                  ease: "easeOut",
-                }}
-                whileHover={{
-                  scale: 1.08,
-                  rotate: 2,
-                  transition: {
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 18,
-                    mass: 0.4,
-                  },
-                }}
+                translateStrength={18}
+                rotateStrength={10}
                 className="group relative p-6 rounded-2xl bg-white/90 backdrop-blur-lg 
                   shadow-[0_12px_30px_rgba(15,23,42,0.12)] flex flex-col items-center text-center 
                   cursor-pointer overflow-hidden border border-slate-200"
+                motionProps={{
+                  layout: true, // layout change smooth
+                  initial: { opacity: 0, scale: 0.9 },
+                  animate: { opacity: 1, scale: 1 },
+                  exit: { opacity: 0, scale: 0.9 },
+                  transition: {
+                    delay: index * 0.04,
+                    duration: 0.35,
+                    ease: "easeOut",
+                  },
+                }}
               >
-                {/* Inner rotating layer (same as before) */}
+                {/* Inner rotating layer */}
                 <motion.div
                   className="absolute inset-0 rounded-2xl border border-sky-100/50 pointer-events-none"
                   animate={{ rotate: 360 }}
@@ -97,9 +182,10 @@ export default function Skills() {
                     duration: 16,
                     ease: "linear",
                   }}
+                  style={{ transformOrigin: "center" }}
                 />
 
-                {/* 🔹 Subtle gradient glow on hover (background feel, not box separate) */}
+                {/* 🔹 Subtle gradient glow on hover */}
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 
                   bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.16),transparent_60%)] 
@@ -132,21 +218,27 @@ export default function Skills() {
                     {skill.name}
                   </h3>
                 </div>
-              </motion.div>
+              </Magnetic3D>
             ))}
           </AnimatePresence>
         </div>
 
-        {/* See More Button */}
+        {/* See More Button with magnetic effect */}
         {filteredSkills.length > displayedSkills.length && (
-          <div className="mt-10">
-            <Link
-              to="/skills"
-              className="inline-block px-6 py-3 rounded-2xl bg-sky-600 text-white font-medium 
-                shadow-[0_10px_25px_rgba(37,99,235,0.35)] hover:bg-sky-700 hover:scale-105 transition"
+          <div className="mt-10 flex justify-center">
+            <Magnetic3D
+              translateStrength={10}
+              rotateStrength={6}
+              className="inline-block"
             >
-              See More Skills
-            </Link>
+              <Link
+                to="/skills"
+                className="inline-block px-6 py-3 rounded-2xl bg-sky-600 text-white font-medium 
+                  shadow-[0_10px_25px_rgba(37,99,235,0.35)] hover:bg-sky-700 transition"
+              >
+                See More Skills
+              </Link>
+            </Magnetic3D>
           </div>
         )}
       </div>

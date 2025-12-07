@@ -56,6 +56,24 @@ export default function CertificationAwards() {
 
   const currentCert = certificates[current];
 
+  // 👉 Swipe handling
+  const handleDragEnd = (event, info) => {
+    const swipeThreshold = 60; // px
+    const velocityThreshold = 500; // px/s
+
+    const offsetX = info.offset.x;
+    const velocityX = info.velocity.x;
+
+    // Left swipe → next
+    if (offsetX < -swipeThreshold || velocityX < -velocityThreshold) {
+      nextSlide();
+    }
+    // Right swipe → previous
+    else if (offsetX > swipeThreshold || velocityX > velocityThreshold) {
+      prevSlide();
+    }
+  };
+
   return (
     <section className="relative py-20 bg-gradient-to-b from-slate-50 via-white to-sky-50 text-slate-900 overflow-hidden">
       {/* 🔵 Soft background blobs (light theme) */}
@@ -104,7 +122,7 @@ export default function CertificationAwards() {
 
         {/* Slider */}
         <div className="relative flex items-center justify-center mt-4">
-          {/* Left arrow */}
+          {/* Left arrow (desktop only) */}
           <motion.button
             onClick={prevSlide}
             whileHover={{ scale: 1.05, y: -1 }}
@@ -114,22 +132,32 @@ export default function CertificationAwards() {
             <ChevronLeft className="w-5 h-5" />
           </motion.button>
 
-          {/* Card */}
+          {/* Card – now draggable for swipe */}
           <motion.div
             key={currentCert?._id || current}
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.25}
+            onDragEnd={handleDragEnd}
             className="relative w-full md:w-[85%] lg:w-[80%] max-w-4xl mx-auto 
                        rounded-3xl bg-white/95 border border-slate-200 
                        shadow-[0_16px_40px_rgba(15,23,42,0.12)] 
-                       backdrop-blur-lg px-5 sm:px-7 py-6 sm:py-7"
+                       backdrop-blur-lg px-5 sm:px-7 py-6 sm:py-7 cursor-grab active:cursor-grabbing"
           >
             {/* 🔁 subtle animated gradient inside card (like other sections) */}
             <motion.div
               className="absolute inset-0 rounded-3xl pointer-events-none"
               animate={{
-                backgroundPosition: ["0% 0%", "100% 0%", "100% 100%", "0% 100%", "0% 0%"],
+                backgroundPosition: [
+                  "0% 0%",
+                  "100% 0%",
+                  "100% 100%",
+                  "0% 100%",
+                  "0% 0%",
+                ],
                 opacity: [0.18, 0.32, 0.22, 0.32, 0.18],
               }}
               transition={{
@@ -212,7 +240,7 @@ export default function CertificationAwards() {
             </div>
           </motion.div>
 
-          {/* Right arrow */}
+          {/* Right arrow (desktop only) */}
           <motion.button
             onClick={nextSlide}
             whileHover={{ scale: 1.05, y: -1 }}
