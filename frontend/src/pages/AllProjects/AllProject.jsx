@@ -55,7 +55,12 @@ export default function Projects() {
           <AnimatePresence>
             {projects.map((project, index) => (
               <motion.div
-                key={project._id || project.id || project.title || `project-${index}`}
+                key={
+                  project._id ||
+                  project.id ||
+                  project.title ||
+                  `project-${index}`
+                }
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 // exit hata diya – jhatka avoid, smooth re-render
@@ -106,7 +111,9 @@ export default function Projects() {
                     <div className="flex flex-wrap gap-2 mt-1">
                       {project.tech.map((tech, i) => (
                         <span
-                          key={`${project._id || project.title || "proj"}-tech-${i}`}
+                          key={`${
+                            project._id || project.title || "proj"
+                          }-tech-${i}`}
                           className="px-3 py-1 rounded-full text-[0.7rem] uppercase tracking-wide 
                                      bg-sky-50 text-sky-700 border border-sky-100"
                         >
@@ -126,7 +133,12 @@ export default function Projects() {
                                py-2.5 text-center shadow-[0_10px_25px_rgba(37,99,235,0.35)] 
                                hover:bg-sky-700 transition-colors"
                   >
-                    <Link to={`/projects/${project._id}`}>Read More →</Link>
+                    <Link
+                      to={`/projects/${project._id}`}
+                      className="flex items-center justify-center w-full h-full"
+                    >
+                      Read More →
+                    </Link>
                   </motion.div>
                 </div>
               </motion.div>

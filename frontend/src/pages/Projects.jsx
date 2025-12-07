@@ -226,7 +226,13 @@ export default function Projects() {
                                py-2.5 text-center shadow-[0_10px_25px_rgba(37,99,235,0.35)] 
                                hover:bg-sky-700 transition-colors"
                   >
-                    <Link to={`/projects/${project._id}`}>Read More →</Link>
+                    {/* 🔥 yaha change kiya: Link poore button area cover kare */}
+                    <Link
+                      to={`/projects/${project._id}`}
+                      className="flex items-center justify-center w-full h-full"
+                    >
+                      Read More →
+                    </Link>
                   </motion.div>
                 </div>
               </Magnetic3D>

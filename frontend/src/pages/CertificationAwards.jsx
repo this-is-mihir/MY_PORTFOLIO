@@ -107,8 +107,8 @@ export default function CertificationAwards() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="mb-12"
         >
-          <span className="text-[2.5rem] tracking-[0.16em] uppercase text-slate-500/80">
-            Achievements
+          <span className="text-[2.5rem] tracking-[0.2em] uppercase text-slate-500/80">
+            Achievement
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold">
             My{" "}
