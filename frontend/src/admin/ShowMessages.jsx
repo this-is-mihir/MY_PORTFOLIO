@@ -6,7 +6,7 @@ import { AdminAuthContext } from "../context/AdminAuthContext";
 import Loader from "../components/Loader";
 
 // ✅ LOCAL BACKEND BASE URL
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
 
 export default function ShowMessages() {
   const { admin } = useContext(AdminAuthContext);
