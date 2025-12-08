@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
-const API_BASE_URL = "http://localhost:5000"; // ⚠️ deploy par change karna
+const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com"; // ⚠️ deploy par change karna
 
 export default function Curriculum() {
   const [data, setData] = useState({ education: [], experience: [] });
