@@ -5,7 +5,7 @@ import { AdminAuthContext } from "./AdminAuthContext";
 export const SkillContext = createContext();
 
 // Backend Base URL
-const API_BASE_URL = "http://localhost:5000/api/skills/skill";
+const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
 
 export const SkillProvider = ({ children }) => {
   const [skills, setSkills] = useState([]);

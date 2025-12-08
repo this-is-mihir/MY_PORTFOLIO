@@ -53,7 +53,7 @@ export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectsReducer, initialState);
 
   // ⬇️ LOCAL BACKEND BASE URL
-  const API_URL = "http://localhost:5000/api/projects/project/";
+  const API_URL = "https://my-portfolio-backend-z9b2.onrender.com";
 
   // Token header
   const getAuthHeader = () => {

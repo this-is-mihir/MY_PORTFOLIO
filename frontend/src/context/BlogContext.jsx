@@ -12,7 +12,7 @@ const initialState = {
 };
 
 // ⬇️ BACKEND BASE URL (LOCAL)
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
 
 // Reducer
 function blogReducer(state, action) {

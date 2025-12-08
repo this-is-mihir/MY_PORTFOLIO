@@ -4,7 +4,7 @@ import axios from "axios";
 export const AdminAuthContext = createContext();
 
 // ⬇️ LOCAL BACKEND BASE URL
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
 
 export const AdminAuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);

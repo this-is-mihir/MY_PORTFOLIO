@@ -11,7 +11,7 @@ export default function Contact() {
     message: "",
   });
 
-  const API_BASE_URL = "http://localhost:5000"; // 🔥 Backend URL
+  const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com"; // 🔥 Backend URL
 
   const handleChange = (e) => {
     const { name, value } = e.target;
