@@ -49,6 +49,12 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/counts", countRoutes);
 app.use("/api/contacts", contactRoutes);
 
+// 👇👇 ADD THIS EXACTLY HERE 👇👇
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+// 👆👆 ADD THIS EXACTLY HERE 👆👆
+
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
