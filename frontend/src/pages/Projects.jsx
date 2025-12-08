@@ -12,8 +12,8 @@ import Loader from "../components/Loader";
 /* 🧲 Reusable Magnetic + 3D Wrapper (subtle version) */
 function Magnetic3D({
   children,
-  translateStrength = 10, 
-  rotateStrength = 6, 
+  translateStrength = 10,
+  rotateStrength = 6,
   className = "",
   motionProps = {},
 }) {
@@ -140,7 +140,8 @@ export default function Projects() {
         </div>
 
         {/* 🔧 Projects Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 sm:gap-8 items-stretch">
+          {/*           👆 yaha items-stretch add kiya */}
           <AnimatePresence>
             {displayedProjects.map((project, index) => (
               <Magnetic3D
@@ -152,9 +153,10 @@ export default function Projects() {
                 }
                 translateStrength={12} // 👈 per-card bhi subtle
                 rotateStrength={6}
-                className="group relative flex flex-col rounded-2xl bg-white/95 backdrop-blur-lg 
+                className="group relative flex flex-col h-full rounded-2xl bg-white/95 backdrop-blur-lg 
                            shadow-[0_12px_30px_rgba(15,23,42,0.12)] overflow-hidden border border-slate-200
                            transition-shadow duration-300"
+                //                    👆 yaha h-full add kiya
                 motionProps={{
                   initial: { opacity: 0, y: 30, scale: 0.98 },
                   animate: { opacity: 1, y: 0, scale: 1 },
