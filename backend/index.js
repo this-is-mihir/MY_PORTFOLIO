@@ -24,8 +24,25 @@ dbConnect();
 
 const PORT = process.env.PORT || 5000;
 
+/* -----------------------------------
+      🔥 CORS FIX (Render + Local)
+----------------------------------- */
+const allowedOrigins = [
+  "http://localhost:5173",                                  // local frontend
+  "https://my-portfolio-frontend-zccy.onrender.com",        // deployed frontend
+];
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: function (origin, callback) {
+    // allow requests without origin (POSTMAN / mobile apps)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("CORS blocked: Origin not allowed"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -35,10 +52,14 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// ✅ IMPORTANT: serve /uploads statically (images + resume pdf)
+/* -----------------------------------
+         Static File Serve (Uploads)
+----------------------------------- */
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+/* -----------------------------------
+                Routes
+----------------------------------- */
 app.use("/api/admin", adminRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/certificates", certificateRoutes);
@@ -49,18 +70,24 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/counts", countRoutes);
 app.use("/api/contacts", contactRoutes);
 
-// 👇👇 ADD THIS EXACTLY HERE 👇👇
+/* -----------------------------------
+        Root Route (for testing)
+----------------------------------- */
 app.get("/", (req, res) => {
   res.send("API is running 🚀");
 });
-// 👆👆 ADD THIS EXACTLY HERE 👆👆
 
-// Error handler
+/* -----------------------------------
+             Error Handler
+----------------------------------- */
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: "Internal Server Error" });
 });
 
+/* -----------------------------------
+                Server
+----------------------------------- */
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
