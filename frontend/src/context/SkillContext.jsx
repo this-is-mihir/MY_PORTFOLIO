@@ -22,7 +22,7 @@ export const SkillProvider = ({ children }) => {
       const res = await axios.get(`${API_BASE_URL}`, getAuthHeader());
       setSkills(res.data);
     } catch (err) {
-      console.error("Error fetching skills:", err);
+      console.error("❌ Skill Fetch Error:", err?.response?.data || err?.message);
     }
   };
 
