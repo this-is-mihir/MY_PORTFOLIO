@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
+const fs = require("fs");
 
 const dbConnect = require("./config/db");
 
@@ -29,7 +30,7 @@ const PORT = process.env.PORT || 5000;
 ----------------------------------- */
 const allowedOrigins = [
   "http://localhost:5173",                                  // local frontend
-  "https://portfolio-frontend-m36u.onrender.com",        // deployed frontend
+  "https://portfolio-frontend-m36u.onrender.com",           // deployed frontend (example)
   "https://mihirpatel.fun"
 ];
 
@@ -70,6 +71,38 @@ app.use("/api/curriculum", curriculumRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/counts", countRoutes);
 app.use("/api/contacts", contactRoutes);
+
+/* -----------------------------------
+    Serve Frontend Build (SPA fallback)
+----------------------------------- */
+// The server will look for frontend build in either "./build" or "./client/build"
+const possibleBuildPaths = [
+  path.join(__dirname, "build"),
+  path.join(__dirname, "client", "build"),
+];
+
+let frontBuildPath = null;
+for (const p of possibleBuildPaths) {
+  if (fs.existsSync(p)) {
+    frontBuildPath = p;
+    break;
+  }
+}
+
+if (frontBuildPath) {
+  // Serve static files
+  app.use(express.static(frontBuildPath));
+
+  // For any GET request that isn't handled by above routes, serve index.html
+  // This enables client-side routing (React Router) to work on refresh / direct links
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontBuildPath, "index.html"));
+  });
+
+  console.log("✅ Serving frontend from:", frontBuildPath);
+} else {
+  console.log("⚠️ Frontend build not found. Place React build in './build' or './client/build'.");
+}
 
 /* -----------------------------------
         Root Route (for testing)

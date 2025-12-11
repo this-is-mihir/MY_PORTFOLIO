@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+// src/router/AppRouter.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import AllSkills from "../pages/AllSkills/AllSkill";
 import AllBlog from "../pages/AllBlog/AllBlog";
@@ -12,6 +13,7 @@ import AdminDashboard from "../admin/AdminDashboard";
 import AdminLogin from "../admin/AdminLogin";
 import ProtectedRoute from "./ProtectedRoute";
 import Services from "../pages/Services";
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -25,8 +27,13 @@ export default function AppRouter() {
       <Route path="/services" element={<Services />} />
       <Route path="/projects/:id" element={<ProjectDetails />} />
       <Route path="/blog/:id" element={<BlogDetails />} />
+
       {/* Admin Routes */}
       <Route path="/admin-login" element={<AdminLogin />} />
+
+      {/* Alias: allow /login to work too (so old links won't 404) */}
+      <Route path="/login" element={<Navigate to="/admin-login" replace />} />
+
       <Route
         path="/admin"
         element={
