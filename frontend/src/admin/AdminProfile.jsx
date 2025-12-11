@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { AdminAuthContext } from "../context/AdminAuthContext";
 import fallbackDP from "../assets/Images/fomal.png";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function AdminProfile() {
   const { admin } = useContext(AdminAuthContext);

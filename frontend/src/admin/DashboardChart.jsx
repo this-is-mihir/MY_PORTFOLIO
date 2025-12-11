@@ -18,7 +18,7 @@ import {
 const COLORS = ["#9DB2FF", "#A5F3FC", "#FCD34D", "#FCA5A5"];
 
 // ✅ LOCAL BACKEND BASE URL
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function DashboardCharts() {
   const { admin } = useContext(AdminAuthContext);

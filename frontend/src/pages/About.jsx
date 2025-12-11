@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DP from "../assets/Images/fomal.png";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function About() {
   const about = [

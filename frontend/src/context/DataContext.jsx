@@ -11,7 +11,7 @@ const initialState = {
 };
 
 // ⬇️ BACKEND BASE URL
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 // Reducer
 function dataReducer(state, action) {

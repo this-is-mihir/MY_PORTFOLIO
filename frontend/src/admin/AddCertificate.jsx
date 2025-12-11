@@ -5,7 +5,7 @@ import { AdminAuthContext } from "../context/AdminAuthContext";
 import toast from "react-hot-toast";
 
 // ✅ LOCAL BACKEND BASE URL
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function AddCertificate() {
   const { admin } = useContext(AdminAuthContext); // token comes from context

@@ -50,8 +50,8 @@ export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectsReducer, initialState);
 
   // ⚠️ LOCAL BACKEND
-  const API_BASE_URL = "http://localhost:5000";
-  // deploy pe: "https://my-portfolio-backend-z9b2.onrender.com"
+  const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
+  
 
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem("admin"));

@@ -11,7 +11,7 @@ import { useContext, useEffect, useState } from "react";
 import { AdminAuthContext } from "../context/AdminAuthContext";
 import DashboardCharts from "./DashboardChart";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function DashboardHome() {
   const { admin } = useContext(AdminAuthContext);
