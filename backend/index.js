@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 5000;
 ----------------------------------- */
 const allowedOrigins = [
   "http://localhost:5173",                                  // local frontend
-  "https://my-portfolio-frontend-zccy.onrender.com",        // deployed frontend
+  "https://portfolio-frontend-m36u.onrender.com",        // deployed frontend
 ];
 
 const corsOptions = {
