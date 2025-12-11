@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
 
 export default function EducationManager() {
   const [education, setEducation] = useState([]);

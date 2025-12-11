@@ -1,13 +1,33 @@
+// routes/skillRoutes.js
+const express = require("express");
+const {
+  getAllSkills,
+  addSkill,
+  deleteSkill,
+  updateSkill,
+} = require("../controllers/skillsController");
+const { protect } = require("../middleware/authMiddleware");
 
-const express=require('express');
-const { getAllSkills, addSkill, deleteSkill, updateSkill } = require('../controllers/skillsController');
-const { protect } = require('../middleware/authMiddleware');
-const router=express.Router();
+const router = express.Router();
 
-router.get('/skill',protect,getAllSkills);
-router.get('/skill/public',getAllSkills);
-router.post('/skill',protect,addSkill);
-router.delete('/skill/:id',protect,deleteSkill);
-router.put('/skill/:id',protect,updateSkill);
+// Base mount: /api/skills   (already defined in index.js)
+//
+// index.js:
+// app.use("/api/skills", skillRoutes)
 
-module.exports=router;
+// GET /api/skills        → getAllSkills (protected)
+// GET /api/skills/public → getAllSkills (public)
+// POST /api/skills       → addSkill
+// DELETE /api/skills/:id → deleteSkill
+// PUT /api/skills/:id    → updateSkill
+
+router.get("/", protect, getAllSkills);      // secured list
+router.get("/public", getAllSkills);         // public list
+
+router.post("/", protect, addSkill);
+
+router.delete("/:id", protect, deleteSkill);
+
+router.put("/:id", protect, updateSkill);
+
+module.exports = router;

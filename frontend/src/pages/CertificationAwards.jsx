@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import Loader from "../components/Loader";
 
-const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
 
 export default function CertificationAwards() {
   const [loading, setLoading] = useState(true);

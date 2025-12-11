@@ -1,18 +1,30 @@
-const express=require('express');
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 const {
   getAllProjects,
   getProjectById,
   createProject,
   updateProject,
-  deleteProject
-}=require('../controllers/projectController');
-const {protect}=require('../middleware/authMiddleware');
+  deleteProject,
+} = require("../controllers/projectController");
+const { protect } = require("../middleware/authMiddleware");
 
-router.get('/project',getAllProjects);
-router.get('/project/:id',getProjectById);
-router.post('/project',protect,createProject);
-router.put('/project/:id',protect,updateProject);
-router.delete('/project/:id',protect,deleteProject);
+// 🔹 Base path: /api/projects (from index.js)
+//    Yaha sirf relative paths rakho
 
-module.exports=router;
+// GET /api/projects
+router.get("/", getAllProjects);
+
+// GET /api/projects/:id
+router.get("/:id", getProjectById);
+
+// POST /api/projects  (protected)
+router.post("/", protect, createProject);
+
+// PUT /api/projects/:id  (protected)
+router.put("/:id", protect, updateProject);
+
+// DELETE /api/projects/:id  (protected)
+router.delete("/:id", protect, deleteProject);
+
+module.exports = router;

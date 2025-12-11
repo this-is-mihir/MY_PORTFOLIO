@@ -1,41 +1,33 @@
-import { createContext, useContext, useReducer } from "react";
+// src/context/BlogContext.jsx
+import React, { createContext, useReducer, useEffect } from "react";
 import axios from "axios";
 
-// Create Context
 export const BlogContext = createContext();
 
-// Initial State
 const initialState = {
   blogs: [],
+  blog: null,
   loading: false,
   error: null,
 };
 
-// ⬇️ BACKEND BASE URL (LOCAL)
-const API_BASE_URL = "https://my-portfolio-backend-z9b2.onrender.com";
-
-// Reducer
 function blogReducer(state, action) {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, loading: true, error: null };
-    case "SET_BLOGS":
+    case "FETCH_BLOGS_SUCCESS":
       return { ...state, blogs: action.payload, loading: false };
-    case "ADD_BLOG":
+    case "FETCH_BLOG_SUCCESS":
+      return { ...state, blog: action.payload, loading: false };
+    case "ADD_BLOG_SUCCESS":
+      return { ...state, blogs: [action.payload, ...state.blogs], loading: false };
+    case "UPDATE_BLOG_SUCCESS":
       return {
         ...state,
-        blogs: [action.payload, ...state.blogs],
+        blogs: state.blogs.map((b) => (b._id === action.payload._id ? action.payload : b)),
         loading: false,
       };
-    case "UPDATE_BLOG":
-      return {
-        ...state,
-        blogs: state.blogs.map((b) =>
-          b._id === action.payload._id ? action.payload : b
-        ),
-        loading: false,
-      };
-    case "DELETE_BLOG":
+    case "DELETE_BLOG_SUCCESS":
       return {
         ...state,
         blogs: state.blogs.filter((b) => b._id !== action.payload),
@@ -48,97 +40,106 @@ function blogReducer(state, action) {
   }
 }
 
-// Provider
-export function BlogProvider({ children }) {
+// LOCAL / DEV base
+const API_BASE_URL = "http://localhost:5000";
+
+// header helper (for protected actions)
+const getAuthHeader = () => {
+  const admin = JSON.parse(localStorage.getItem("admin"));
+  return { headers: { Authorization: `Bearer ${admin?.token}` } };
+};
+
+// normalize different API shapes to an array
+const normalizeArray = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.blogs)) return data.blogs;
+  if (Array.isArray(data?.data)) return data.data;
+  if (data && typeof data === "object") {
+    // flatten values (safe fallback)
+    const vals = Object.values(data).flat().filter(Boolean);
+    if (Array.isArray(vals)) return vals;
+  }
+  return [];
+};
+
+export const BlogProvider = ({ children }) => {
   const [state, dispatch] = useReducer(blogReducer, initialState);
 
-  // Token from localStorage
-  const getAuthHeader = () => {
-    const admin = JSON.parse(localStorage.getItem("admin"));
-    return {
-      headers: { Authorization: `Bearer ${admin?.token}` },
-    };
-  };
-
-  // Fetch All Blogs
+  // Fetch all blogs (public)
   const fetchBlogs = async () => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/blogs/blog/`);
-      dispatch({ type: "SET_BLOGS", payload: res.data });
+      // ✅ Correct plural route — index.js mounts router at /api/blogs
+      const res = await axios.get(`${API_BASE_URL}/api/blogs`);
+      const data = normalizeArray(res.data);
+      dispatch({ type: "FETCH_BLOGS_SUCCESS", payload: data });
     } catch (err) {
-      dispatch({
-        type: "ERROR",
-        payload: err.response?.data?.message || err.message,
-      });
+      console.error("fetchBlogs error:", err);
+      dispatch({ type: "ERROR", payload: err.response?.data?.message || err.message });
     }
   };
 
-  // Fetch Single Blog
+  // Fetch a single blog by id
   const fetchBlogById = async (id) => {
+    dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/blogs/blog/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/blogs/${id}`);
+      dispatch({ type: "FETCH_BLOG_SUCCESS", payload: res.data });
       return res.data;
     } catch (err) {
-      dispatch({
-        type: "ERROR",
-        payload: err.response?.data?.message || err.message,
-      });
+      console.error("fetchBlogById error:", err);
+      dispatch({ type: "ERROR", payload: err.response?.data?.message || err.message });
+      return null;
     }
   };
 
-  // Create Blog
+  // Create blog (protected)
   const createBlog = async (blogData) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.post(
-        `${API_BASE_URL}/api/blogs/blog/`,
-        blogData,
-        getAuthHeader()
-      );
-      dispatch({ type: "ADD_BLOG", payload: res.data });
+      const res = await axios.post(`${API_BASE_URL}/api/blogs`, blogData, getAuthHeader());
+      dispatch({ type: "ADD_BLOG_SUCCESS", payload: res.data });
+      return res.data;
     } catch (err) {
-      dispatch({
-        type: "ERROR",
-        payload: err.response?.data?.message || err.message,
-      });
+      console.error("createBlog error:", err);
+      dispatch({ type: "ERROR", payload: err.response?.data?.message || err.message });
+      throw err;
     }
   };
 
-  // Update Blog
+  // Update blog (protected)
   const updateBlog = async (id, blogData) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.put(
-        `${API_BASE_URL}/api/blogs/blog/${id}`,
-        blogData,
-        getAuthHeader()
-      );
-      dispatch({ type: "UPDATE_BLOG", payload: res.data });
+      const res = await axios.put(`${API_BASE_URL}/api/blogs/${id}`, blogData, getAuthHeader());
+      dispatch({ type: "UPDATE_BLOG_SUCCESS", payload: res.data });
+      return res.data;
     } catch (err) {
-      dispatch({
-        type: "ERROR",
-        payload: err.response?.data?.message || err.message,
-      });
+      console.error("updateBlog error:", err);
+      dispatch({ type: "ERROR", payload: err.response?.data?.message || err.message });
+      throw err;
     }
   };
 
-  // Delete Blog
+  // Delete blog (protected)
   const deleteBlog = async (id) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      await axios.delete(
-        `${API_BASE_URL}/api/blogs/blog/${id}`,
-        getAuthHeader()
-      );
-      dispatch({ type: "DELETE_BLOG", payload: id });
+      await axios.delete(`${API_BASE_URL}/api/blogs/${id}`, getAuthHeader());
+      dispatch({ type: "DELETE_BLOG_SUCCESS", payload: id });
+      return true;
     } catch (err) {
-      dispatch({
-        type: "ERROR",
-        payload: err.response?.data?.message || err.message,
-      });
+      console.error("deleteBlog error:", err);
+      dispatch({ type: "ERROR", payload: err.response?.data?.message || err.message });
+      throw err;
     }
   };
+
+  // load blogs once
+  useEffect(() => {
+    fetchBlogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BlogContext.Provider
@@ -154,4 +155,4 @@ export function BlogProvider({ children }) {
       {children}
     </BlogContext.Provider>
   );
-}
+};

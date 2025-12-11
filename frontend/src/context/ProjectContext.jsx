@@ -2,7 +2,6 @@
 import React, { createContext, useReducer } from "react";
 import axios from "axios";
 
-// Initial State
 const initialState = {
   projects: [],
   project: null,
@@ -10,7 +9,6 @@ const initialState = {
   error: null,
 };
 
-// Reducer
 const projectsReducer = (state, action) => {
   switch (action.type) {
     case "SET_LOADING":
@@ -46,16 +44,15 @@ const projectsReducer = (state, action) => {
   }
 };
 
-// Create Context
 export const ProjectContext = createContext();
 
 export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectsReducer, initialState);
 
-  // ⬇️ LOCAL BACKEND BASE URL
-  const API_URL = "https://my-portfolio-backend-z9b2.onrender.com";
+  // ⚠️ LOCAL BACKEND
+  const API_BASE_URL = "http://localhost:5000";
+  // deploy pe: "https://my-portfolio-backend-z9b2.onrender.com"
 
-  // Token header
   const getAuthHeader = () => {
     const admin = JSON.parse(localStorage.getItem("admin"));
     return {
@@ -63,12 +60,17 @@ export const ProjectProvider = ({ children }) => {
     };
   };
 
-  // CRUD — Fetch All
+  // 🔹 GET ALL
   const fetchProjects = async () => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.get(API_URL);
-      dispatch({ type: "FETCH_PROJECTS_SUCCESS", payload: res.data });
+      const res = await axios.get(`${API_BASE_URL}/api/projects`);
+
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data?.projects || [];
+
+      dispatch({ type: "FETCH_PROJECTS_SUCCESS", payload: data });
     } catch (error) {
       dispatch({
         type: "ERROR",
@@ -77,11 +79,11 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
-  // CRUD — Fetch One
+  // 🔹 GET ONE
   const fetchProjectById = async (id) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.get(`${API_URL}${id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/projects/${id}`);
       dispatch({ type: "FETCH_PROJECT_SUCCESS", payload: res.data });
     } catch (error) {
       dispatch({
@@ -91,11 +93,15 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
-  // CRUD — Create
+  // 🔹 CREATE
   const createProject = async (projectData) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      const res = await axios.post(API_URL, projectData, getAuthHeader());
+      const res = await axios.post(
+        `${API_BASE_URL}/api/projects`,
+        projectData,
+        getAuthHeader()
+      );
       dispatch({ type: "ADD_PROJECT_SUCCESS", payload: res.data });
     } catch (error) {
       dispatch({
@@ -105,12 +111,12 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
-  // CRUD — Update
+  // 🔹 UPDATE
   const updateProject = async (id, projectData) => {
     dispatch({ type: "SET_LOADING" });
     try {
       const res = await axios.put(
-        `${API_URL}${id}`,
+        `${API_BASE_URL}/api/projects/${id}`,
         projectData,
         getAuthHeader()
       );
@@ -123,11 +129,14 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
-  // CRUD — Delete
+  // 🔹 DELETE
   const deleteProject = async (id) => {
     dispatch({ type: "SET_LOADING" });
     try {
-      await axios.delete(`${API_URL}${id}`, getAuthHeader());
+      await axios.delete(
+        `${API_BASE_URL}/api/projects/${id}`,
+        getAuthHeader()
+      );
       dispatch({ type: "DELETE_PROJECT_SUCCESS", payload: id });
     } catch (error) {
       dispatch({
