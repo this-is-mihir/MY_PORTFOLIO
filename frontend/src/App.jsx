@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+// src/App.jsx
+import { HashRouter as Router, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar/index.jsx";
 import AppRouter from "./router";
 import Footer from "./components/footer/index.jsx";
@@ -8,8 +9,10 @@ import { SkillProvider } from "./context/SkillContext.jsx";
 import { BlogProvider } from "./context/BlogContext.jsx";
 import { Toaster } from "react-hot-toast";
 import { ProjectProvider } from "./context/ProjectContext.jsx";
+
 function Layout() {
   const location = useLocation();
+  // Note: with HashRouter the path after the '#' is used — this check still works
   const hideLayout = location.pathname.startsWith("/admin"); // hide navbar/footer for admin
 
   return (

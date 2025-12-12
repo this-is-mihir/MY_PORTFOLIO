@@ -18,34 +18,36 @@ const contactRoutes = require("./routes/contactRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const curriculumRoutes = require("./routes/curriculumRoutes");
 
-const app = express();
-
 dotenv.config();
 dbConnect();
 
+const app = express();
 const PORT = process.env.PORT || 5000;
 
 /* -----------------------------------
       🔥 CORS FIX (Render + Local)
 ----------------------------------- */
+// allow both http/https and with/without www variants commonly used
 const allowedOrigins = [
-  "http://localhost:5173",                                  // local frontend
-  "https://portfolio-frontend-m36u.onrender.com",           // deployed frontend (example)
-  "https://mihirpatel.fun"
+  "http://localhost:5173", // local frontend
+  "http://localhost:3000",
+  "https://mihirpatel.fun",
+  "https://www.mihirpatel.fun",
+  "https://portfolio-frontend-m36u.onrender.com", // example
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
     // allow requests without origin (POSTMAN / mobile apps)
     if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("CORS blocked: Origin not allowed"));
-    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // allow same-origin (when browser sends full host header)
+    const originHost = origin.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    if (allowedOrigins.some((o) => o.includes(originHost))) return callback(null, true);
+    // fallback: allow (you can tighten this later)
+    return callback(new Error("CORS blocked: Origin not allowed"));
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
@@ -60,7 +62,7 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* -----------------------------------
-                Routes
+                Routes (API)
 ----------------------------------- */
 app.use("/api/admin", adminRoutes);
 app.use("/api/skills", skillRoutes);
@@ -75,7 +77,6 @@ app.use("/api/contacts", contactRoutes);
 /* -----------------------------------
     Serve Frontend Build (SPA fallback)
 ----------------------------------- */
-// The server will look for frontend build in either "./build" or "./client/build"
 const possibleBuildPaths = [
   path.join(__dirname, "build"),
   path.join(__dirname, "client", "build"),
@@ -90,32 +91,70 @@ for (const p of possibleBuildPaths) {
 }
 
 if (frontBuildPath) {
-  // Serve static files
+  console.log("✅ Frontend build found at:", frontBuildPath);
+
+  // Serve static assets
   app.use(express.static(frontBuildPath));
 
-  // For any GET request that isn't handled by above routes, serve index.html
-  // This enables client-side routing (React Router) to work on refresh / direct links
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontBuildPath, "index.html"));
+  // Only serve index.html for non-API GET requests (so API still works)
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) return next();
+    res.sendFile(path.join(frontBuildPath, "index.html"), (err) => {
+      if (err) next(err);
+    });
   });
-
-  console.log("✅ Serving frontend from:", frontBuildPath);
 } else {
-  console.log("⚠️ Frontend build not found. Place React build in './build' or './client/build'.");
+  console.warn(
+    "⚠️ Frontend build not found. Place React build in './build' or './client/build'."
+  );
+
+  // SAFE fallback: if someone hits common client-side routes directly (like /login),
+  // redirect them to the root with a hash route so client can handle via HashRouter.
+  // This prevents the plain 404 "Not Found" page and allows immediate access.
+  const clientRoutes = [
+    "/",
+    "/login",
+    "/admin",
+    "/admin/*",
+    "/projects",
+    "/projects/*",
+    "/blog",
+    "/blog/*",
+    "/about",
+    "/contact",
+    "/skills",
+    "/services",
+    "/curriculum",
+  ];
+
+  app.get(clientRoutes, (req, res) => {
+    // Build a hash path from original url: "/login" -> "/#/login"
+    const original = req.path || "/";
+    // If root, redirect to root (no hash required)
+    if (original === "/") return res.redirect(302, "https://mihirpatel.fun/");
+
+    // Ensure we preserve any nested paths (like /projects/123)
+    const hashPath = `#${original}`;
+    const redirectTo = `https://mihirpatel.fun/${hashPath}`;
+    console.log(`Redirecting ${req.path} -> ${redirectTo} (no build present)`);
+    return res.redirect(302, redirectTo);
+  });
 }
 
 /* -----------------------------------
-        Root Route (for testing)
+        Root Route (for simple API test)
 ----------------------------------- */
-app.get("/", (req, res) => {
-  res.send("API is running 🚀");
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 /* -----------------------------------
              Error Handler
 ----------------------------------- */
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Unhandled error:", err && err.stack ? err.stack : err);
+  // If headers already sent, delegate
+  if (res.headersSent) return next(err);
   res.status(500).json({ message: "Internal Server Error" });
 });
 
