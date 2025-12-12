@@ -1,58 +1,72 @@
+// src/context/AdminAuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 
 export const AdminAuthContext = createContext();
 
-// ⬇️ LOCAL BACKEND BASE URL
+// === set your deployed backend URL here ===
+// Replace with your actual backend URL if different.
 const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export const AdminAuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore admin on page reload
+  // Restore admin from localStorage on mount
   useEffect(() => {
-    const savedAdmin = localStorage.getItem("admin");
-    if (savedAdmin) {
-      setAdmin(JSON.parse(savedAdmin));
+    try {
+      const saved = localStorage.getItem("admin");
+      if (saved) setAdmin(JSON.parse(saved));
+    } catch (e) {
+      console.warn("Failed to parse saved admin:", e);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  // LOGIN
-  const login = async (email, password) => {
+  // login accepts username (or email) and password
+  const login = async (usernameOrEmail, password) => {
     try {
-      // ⚠️ Backend expects { email, password }
-      const res = await axios.post(`${API_BASE_URL}/api/admin/login`, {
-        email,
-        password,
-      });
+      // backend expects { email, password } — pass username as email if that's what the form sends
+      const payload = { email: usernameOrEmail, password };
+      const res = await axios.post(`${API_BASE_URL}/api/admin/login`, payload);
 
-      const { token } = res.data;
+      // check common token shapes
+      const token = res?.data?.token || res?.data?.admin?.token || res?.data?.data?.token;
 
       if (!token) {
-        return { success: false, message: "No token received from server" };
+        const msg = res?.data?.message || res?.data?.error || "Login failed: no token.";
+        return { success: false, message: msg };
       }
 
-      const adminObj = { email, token };
+      const adminObj = { email: usernameOrEmail, token };
 
-      // save in localStorage
-      localStorage.setItem("admin", JSON.stringify(adminObj));
+      try {
+        localStorage.setItem("admin", JSON.stringify(adminObj));
+      } catch (e) {
+        console.warn("Could not save admin to localStorage", e);
+      }
+
       setAdmin(adminObj);
-
       return { success: true };
     } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
-      return {
-        success: false,
-        message: err.response?.data?.message || "Login failed",
-      };
+      const serverMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.response?.data ||
+        err?.message ||
+        "Login failed";
+      console.error("Login failed:", serverMessage);
+      return { success: false, message: serverMessage };
     }
   };
 
-  // LOGOUT
   const logout = () => {
-    localStorage.removeItem("admin");
+    try {
+      localStorage.removeItem("admin");
+    } catch (e) {
+      console.warn("Failed to remove admin from localStorage", e);
+    }
     setAdmin(null);
   };
 

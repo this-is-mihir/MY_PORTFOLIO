@@ -12,21 +12,19 @@ import { ProjectProvider } from "./context/ProjectContext.jsx";
 
 function Layout() {
   const location = useLocation();
-  // Note: with HashRouter the path after the '#' is used — this check still works
-  const hideLayout = location.pathname.startsWith("/admin"); // hide navbar/footer for admin
+  // With HashRouter the location.pathname will reflect the path after the hash.
+  // e.g. https://mihirpatel.fun/#/admin => pathname === '/admin'
+  const hideLayout = location.pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       <Toaster position="top-right" reverseOrder={false} />
-      {/* Navbar */}
       {!hideLayout && <Navbar />}
 
-      {/* Routing */}
       <main className="flex-1">
         <AppRouter />
       </main>
 
-      {/* Footer */}
       {!hideLayout && <Footer />}
     </div>
   );
