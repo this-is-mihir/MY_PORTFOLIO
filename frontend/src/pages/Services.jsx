@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Code2, Palette, Rocket, Building2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Services() {
   const services = [
@@ -165,7 +166,7 @@ export default function Services() {
                   whileTap={{ scale: 0.95 }}
                   className="text-xs sm:text-sm font-medium text-sky-700 hover:text-sky-900"
                 >
-                  <a href="/contact">Let&apos;s build this →</a>
+                  <Link to="/contact">Let&apos;s build this →</Link>
                 </motion.button>
               </div>
             </motion.div>
