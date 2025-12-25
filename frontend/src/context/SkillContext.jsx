@@ -36,31 +36,39 @@ export const SkillProvider = ({ children }) => {
   const fetchSkills = async () => {
     try {
       if (!token) {
-        // if no token, avoid calling protected admin endpoint
         console.warn("fetchSkills skipped: no admin token");
         setSkills([]);
         return;
       }
 
-      const res = await axios.get(`${API_BASE_URL}/api/skills`, getAuthHeader());
+      const res = await axios.get(
+        `${API_BASE_URL}/api/skills`,
+        getAuthHeader()
+      );
       const data = normalizeArray(res.data);
       setSkills(data);
       return data;
     } catch (err) {
-      console.error("❌ Skill Fetch Error:", err?.response?.data || err?.message);
+      console.error(
+        "❌ Skill Fetch Error:",
+        err?.response?.data || err?.message
+      );
       setSkills([]);
       return [];
     }
   };
 
-  // Fetch public skills (for public pages) -> GET /api/skills/public
+  // ✅ Fetch public skills (for portfolio) -> GET /api/skills
   const fetchPublicSkills = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/skills/public`);
+      const res = await axios.get(`${API_BASE_URL}/api/skills`);
       const data = normalizeArray(res.data);
       return data;
     } catch (err) {
-      console.error("❌ Public Skill Fetch Error:", err?.response?.data || err?.message);
+      console.error(
+        "❌ Public Skill Fetch Error:",
+        err?.response?.data || err?.message
+      );
       return [];
     }
   };
@@ -68,8 +76,11 @@ export const SkillProvider = ({ children }) => {
   // Add Skill -> POST /api/skills (protected)
   const addSkill = async (skillData) => {
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/skills`, skillData, getAuthHeader());
-      // optimistic refetch
+      const res = await axios.post(
+        `${API_BASE_URL}/api/skills`,
+        skillData,
+        getAuthHeader()
+      );
       await fetchSkills();
       return res.data;
     } catch (err) {
@@ -81,7 +92,11 @@ export const SkillProvider = ({ children }) => {
   // Update Skill -> PUT /api/skills/:id (protected)
   const updateSkill = async (id, skillData) => {
     try {
-      const res = await axios.put(`${API_BASE_URL}/api/skills/${id}`, skillData, getAuthHeader());
+      const res = await axios.put(
+        `${API_BASE_URL}/api/skills/${id}`,
+        skillData,
+        getAuthHeader()
+      );
       await fetchSkills();
       return res.data;
     } catch (err) {
@@ -93,7 +108,10 @@ export const SkillProvider = ({ children }) => {
   // Delete Skill -> DELETE /api/skills/:id (protected)
   const deleteSkill = async (id) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/skills/${id}`, getAuthHeader());
+      await axios.delete(
+        `${API_BASE_URL}/api/skills/${id}`,
+        getAuthHeader()
+      );
       await fetchSkills();
       return true;
     } catch (err) {
@@ -107,7 +125,7 @@ export const SkillProvider = ({ children }) => {
     if (token) {
       fetchSkills();
     } else {
-      setSkills([]); // clear when logged out
+      setSkills([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
