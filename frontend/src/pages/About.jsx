@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DP from "../assets/Images/fomal.png";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
@@ -169,7 +170,7 @@ export default function About() {
                 whileTap={{ scale: 0.96 }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-slate-900 border border-slate-200 text-sm font-medium hover:bg-slate-50 transition-colors"
               >
-                View Projects →
+                <Link to="/projects">View Projects →</Link>
               </motion.a>
             </div>
 
