@@ -71,7 +71,7 @@ export function DataProvider({ children }) {
       };
 
       // Use the correct plural routes (index.js mounts these)
-      const skillsUrl = `${API_BASE_URL}/api/skills/public`;
+      const skillsUrl = `${API_BASE_URL}/api/skills`;
       const blogsUrl = `${API_BASE_URL}/api/blogs`;
 
       const [skillsData, blogsData] = await Promise.all([

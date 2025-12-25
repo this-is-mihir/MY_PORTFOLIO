@@ -53,10 +53,10 @@ export const SkillProvider = ({ children }) => {
     }
   };
 
-  // Fetch public skills (for public pages) -> GET /api/skills/public
+  // Fetch public skills (for public pages) -> GET /api/skills
   const fetchPublicSkills = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/skills/public`);
+      const res = await axios.get(`${API_BASE_URL}/api/skills`);
       const data = normalizeArray(res.data);
       return data;
     } catch (err) {

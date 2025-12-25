@@ -16,7 +16,7 @@ const router = express.Router();
 // app.use("/api/skills", skillRoutes)
 
 // GET /api/skills        → getAllSkills (protected)
-// GET /api/skills/public → getAllSkills (public)
+// GET /api/skills/ → getAllSkills (public)
 // POST /api/skills       → addSkill
 // DELETE /api/skills/:id → deleteSkill
 // PUT /api/skills/:id    → updateSkill
