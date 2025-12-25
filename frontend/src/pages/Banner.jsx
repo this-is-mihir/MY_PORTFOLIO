@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FaDownload } from "react-icons/fa";
 import DP from "../assets/Images/fomal.png";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
@@ -203,7 +204,8 @@ export default function Banner() {
 
             <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1 text-[11px] sm:text-xs text-slate-600 backdrop-blur">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <a href="/contact">Available for work</a>
+              <Link to="/contacts">Available for work</Link>
+
             </div>
           </div>
 
