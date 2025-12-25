@@ -165,7 +165,7 @@ export default function About() {
                 Download CV
               </motion.a>
               <motion.a
-                href="/projects"
+                
                 whileHover={{ scale: 1.04, y: -1 }}
                 whileTap={{ scale: 0.96 }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-slate-900 border border-slate-200 text-sm font-medium hover:bg-slate-50 transition-colors"
