@@ -16,20 +16,12 @@ const router = express.Router();
   index.js:
   app.use("/api/skills", skillRoutes);
 
-<<<<<<< HEAD
-// GET /api/skills        → getAllSkills (protected)
-// GET /api/skills/ → getAllSkills (public)
-// POST /api/skills       → addSkill
-// DELETE /api/skills/:id → deleteSkill
-// PUT /api/skills/:id    → updateSkill
-=======
-  DESIGN DECISION (IMPORTANT):
-  - GET skills → PUBLIC (portfolio needs it)
-  - POST / PUT / DELETE → ADMIN ONLY
+  DESIGN:
+  - GET /api/skills        → PUBLIC (portfolio)
+  - POST / PUT / DELETE    → ADMIN ONLY
 */
->>>>>>> 7bff0db949058847184bd6c924022742500ac7ff
 
-// ✅ PUBLIC – portfolio, homepage, etc.
+// ✅ PUBLIC – portfolio, homepage
 router.get("/", getAllSkills);
 
 // 🔒 ADMIN ONLY
