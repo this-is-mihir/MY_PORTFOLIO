@@ -1,10 +1,25 @@
-const dotenv=require('dotenv')
-dotenv.config()
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+require("dotenv").config();
+
 const DB_URI = process.env.MONGO;
 
-const dbConnect = () => mongoose.connect(DB_URI)
-.then(() => console.log("✅ Mongoose connected to MongoDB Atlas"))
-.catch(err => console.log("❌ Mongoose connection error:", err));
+const dbConnect = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    // already connected
+    return;
+  }
+
+  try {
+    await mongoose.connect(DB_URI, {
+      maxPoolSize: 10,   // 🔥 connection pooling
+      serverSelectionTimeoutMS: 5000,
+    });
+
+    console.log("✅ MongoDB connected (pooled)");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
+    process.exit(1);
+  }
+};
 
 module.exports = dbConnect;
