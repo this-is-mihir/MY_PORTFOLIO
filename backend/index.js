@@ -57,7 +57,9 @@ app.use(bodyParser.json());
 /* -----------------------------------
          Static File Serve (Uploads)
 ----------------------------------- */
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+const uploadsPath = path.join(process.cwd(), "backend/uploads");
+app.use("/uploads", express.static(uploadsPath));
+
 
 /* -----------------------------------
                 Routes (API)
