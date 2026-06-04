@@ -16,14 +16,44 @@ export const AdminAuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("admin");
-      if (saved) setAdmin(JSON.parse(saved));
-    } catch (e) {
-      console.warn("Failed to parse saved admin:", e);
-    } finally {
-      setLoading(false);
-    }
+    const verifyStoredToken = async () => {
+      try {
+        const saved = localStorage.getItem("admin");
+        if (!saved) {
+          setLoading(false);
+          return;
+        }
+
+        const parsed = JSON.parse(saved);
+        if (!parsed || !parsed.token) {
+          localStorage.removeItem("admin");
+          setLoading(false);
+          return;
+        }
+
+        // Verify token with backend before trusting it
+        const res = await axios.get(`${API_BASE_URL}/api/admin/verify`, {
+          headers: { Authorization: `Bearer ${parsed.token}` },
+        });
+
+        if (res.data && res.data.valid) {
+          setAdmin(parsed);
+        } else {
+          // Token invalid — clear stale data
+          localStorage.removeItem("admin");
+          setAdmin(null);
+        }
+      } catch (e) {
+        // Token expired / invalid / network error — clear stale data
+        console.warn("Stored admin token is invalid or expired, clearing session.");
+        localStorage.removeItem("admin");
+        setAdmin(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    verifyStoredToken();
   }, []);
 
   const login = async (usernameOrEmail, password) => {
