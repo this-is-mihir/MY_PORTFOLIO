@@ -1,5 +1,6 @@
 const express = require("express");
 const { loginAdmin } = require("../controllers/adminController");
+const { protect } = require("../middleware/authMiddleware");
 const Admin = require("../models/Admin");
 
 const router = express.Router();
@@ -23,5 +24,11 @@ router.get("/create-default-admin", async (req, res) => {
 
 // POST /api/admin/login
 router.post("/login", loginAdmin);
+
+// GET /api/admin/verify — validate stored token on page load
+// protect middleware verifies JWT; if invalid/expired it auto-returns 401
+router.get("/verify", protect, (req, res) => {
+  res.json({ valid: true, email: req.user.email });
+});
 
 module.exports = router;
