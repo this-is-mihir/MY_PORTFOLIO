@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { AdminAuthContext } from "../context/AdminAuthContext";
-import fallbackDP from "../assets/Images/fomal.png";
+import fallbackDP from "../assets/Images/fomal.jpeg";
 
 const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 

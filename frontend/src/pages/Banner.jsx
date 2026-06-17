@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FaDownload } from "react-icons/fa";
-import DP from "../assets/Images/fomal.png";
+import DP from "../assets/Images/fomal.jpeg";
 import { Link } from "react-router-dom";
 
 const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
