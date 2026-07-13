@@ -24,13 +24,18 @@ export default function Banner() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/profile`);
-        const data = await response.json();
-        if (data.success && data.data.length > 0) {
-          setProfile(data.data[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+        const res = await fetch(`${API_BASE_URL}/api/profile`);
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        const data = await res.json();
+        setProfile({
+          name: data?.name || "Mihir",
+          resumeUrl: data?.resumeUrl || "",
+          avatar: data?.avatar || "",
+          title: data?.title || "",
+          bio: data?.bio || ""
+        });
+      } catch (err) {
+        console.error("Error fetching profile:", err);
       }
     };
     fetchProfile();
@@ -151,21 +156,7 @@ export default function Banner() {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/profile`);
-        if (!res.ok) throw new Error("Failed to fetch profile");
-        const data = await res.json();
-        setProfile({
-          resumeUrl: data?.resumeUrl || "",
-        });
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      }
-    };
-    fetchProfile();
-  }, []);
+
 
   const resumeHref = profile.resumeUrl || "/cv.pdf";
 
