@@ -73,29 +73,26 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-[calc(100%+0.75rem)] left-0 w-full bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_16px_40px_rgba(0,0,0,0.1)] rounded-3xl px-6 py-6 md:hidden flex flex-col space-y-4"
+              className="absolute top-[calc(100%+0.75rem)] left-0 w-full bg-white border border-slate-100 shadow-2xl rounded-3xl p-4 md:hidden flex flex-col"
             >
-              <ul className="flex flex-col space-y-2 text-base font-semibold text-slate-800">
+              <ul className="flex flex-col space-y-1.5 text-[15px] font-semibold">
                 {menuItems.map((item) => {
                   const path = item === "Home" ? "/" : `/${item.toLowerCase()}`;
                   const isActive = location.pathname === path || (item !== "Home" && location.pathname.startsWith(path));
 
                   return (
-                    <li key={item} className="relative">
+                    <li key={item}>
                       <Link
                         onClick={() => setIsOpen(false)}
                         to={path}
-                        className={`block px-4 py-3 rounded-2xl transition-colors duration-200 relative z-10 ${
+                        className={`block px-5 py-3.5 rounded-2xl transition-all duration-200 ${
                           isActive 
-                            ? "text-white" 
-                            : "hover:bg-black/5 hover:text-[#111]"
+                            ? "bg-[#111] text-white shadow-md" 
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         {item}
                       </Link>
-                      {isActive && (
-                        <div className="absolute inset-0 bg-[#111] rounded-2xl shadow-sm z-0" />
-                      )}
                     </li>
                   );
                 })}
