@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Home, Code2, BookOpen, User, Briefcase, Mail, ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
@@ -10,6 +10,30 @@ export default function Navbar() {
   const location = useLocation();
 
   const menuItems = ["Home", "Skills", "Blog", "About", "Projects", "Contact"];
+
+  const getIcon = (item) => {
+    switch (item) {
+      case "Home": return <Home size={18} strokeWidth={2.5} />;
+      case "Skills": return <Code2 size={18} strokeWidth={2.5} />;
+      case "Blog": return <BookOpen size={18} strokeWidth={2.5} />;
+      case "About": return <User size={18} strokeWidth={2.5} />;
+      case "Projects": return <Briefcase size={18} strokeWidth={2.5} />;
+      case "Contact": return <Mail size={18} strokeWidth={2.5} />;
+      default: return <ChevronRight size={18} strokeWidth={2.5} />;
+    }
+  };
+
+  const menuVars = {
+    initial: { opacity: 0, y: -10, scale: 0.95 },
+    animate: { opacity: 1, y: 0, scale: 1, transition: { staggerChildren: 0.04 } },
+    exit: { opacity: 0, y: -10, scale: 0.95, transition: { staggerChildren: 0.03, staggerDirection: -1 } }
+  };
+
+  const itemVars = {
+    initial: { opacity: 0, x: -10 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -5 }
+  };
 
   return (
     <div className="fixed top-2 sm:top-3 left-0 w-full z-50 flex justify-center px-4 sm:px-6 lg:px-8 pointer-events-none">
@@ -69,31 +93,41 @@ export default function Navbar() {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-[calc(100%+0.75rem)] left-0 w-full bg-white border border-slate-100 shadow-2xl rounded-3xl p-4 md:hidden flex flex-col"
+              variants={menuVars}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="absolute top-[calc(100%+0.75rem)] left-0 w-full bg-white/95 backdrop-blur-3xl border border-white/60 shadow-[0_24px_50px_rgba(0,0,0,0.1)] rounded-3xl p-3.5 md:hidden flex flex-col"
             >
-              <ul className="flex flex-col space-y-1.5 text-[15px] font-semibold">
+              <ul className="flex flex-col space-y-1">
                 {menuItems.map((item) => {
                   const path = item === "Home" ? "/" : `/${item.toLowerCase()}`;
                   const isActive = location.pathname === path || (item !== "Home" && location.pathname.startsWith(path));
 
                   return (
-                    <li key={item}>
+                    <motion.li key={item} variants={itemVars}>
                       <Link
                         onClick={() => setIsOpen(false)}
                         to={path}
-                        className={`block px-5 py-3.5 rounded-2xl transition-all duration-200 ${
+                        className={`flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-200 group ${
                           isActive 
-                            ? "bg-[#111] text-white shadow-md" 
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                            ? "bg-indigo-50/80 text-indigo-700" 
+                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
-                        {item}
+                        <div className="flex items-center gap-4">
+                          <span className={`transition-colors ${isActive ? "text-indigo-600" : "text-slate-400 group-hover:text-slate-600"}`}>
+                            {getIcon(item)}
+                          </span>
+                          <span className={`font-semibold tracking-wide ${isActive ? "text-[15px]" : "text-[14px]"}`}>
+                            {item}
+                          </span>
+                        </div>
+                        {isActive && (
+                          <motion.div layoutId="mobile-active" className="w-1.5 h-1.5 rounded-full bg-indigo-600 shadow-[0_0_8px_rgba(79,70,229,0.6)]" />
+                        )}
                       </Link>
-                    </li>
+                    </motion.li>
                   );
                 })}
               </ul>
