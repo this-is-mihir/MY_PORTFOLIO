@@ -178,7 +178,7 @@ export default function AddSkill() {
                     <h4 className="font-bold text-slate-800 text-[13px] text-center w-full truncate">{skill?.name || "Unnamed"}</h4>
                     <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 mt-1">{skill?.category}</p>
 
-                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-3 flex items-center justify-center gap-2 w-full opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => handleEdit(skill)}
                         className="p-2 bg-white border border-slate-200 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors shadow-sm"
