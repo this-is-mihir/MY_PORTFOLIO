@@ -212,10 +212,10 @@ export default function AddCertificate() {
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-slate-800 text-[14px] leading-tight truncate" title={cert.title}>{cert.title}</h4>
                     <p className="text-[12px] font-medium text-slate-500 mt-1">{cert.issuer}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{cert.date}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">{cert.date ? new Date(cert.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : ''}</p>
                   </div>
 
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="mt-3 flex items-center justify-end gap-2 w-full opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => handleEdit(cert)}
                       className="p-2 bg-white/90 backdrop-blur border border-slate-200 text-blue-600 rounded-xl hover:bg-blue-50 transition-colors shadow-sm"
