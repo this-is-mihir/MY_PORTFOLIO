@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useBlogs } from "../hook/allData";
+import { useBlog } from "../hook/allData";
 import toast from "react-hot-toast";
 import { GripVertical, Edit2, Trash2, Plus, Image as ImageIcon, Save, User as UserIcon } from "lucide-react";
 
@@ -12,7 +12,7 @@ export default function AddBlog() {
     updateBlog,
     deleteBlog,
     reorderBlogs,
-  } = useBlogs();
+  } = useBlog();
 
   const [formData, setFormData] = useState({
     title: "",
