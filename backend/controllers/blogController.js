@@ -12,7 +12,7 @@ exports.createBlog=async(req,res)=>{
 
 exports.getAllBlogs=async(req,res)=>{
   try {
-    const blogs=await Blog.find();
+    const blogs=await Blog.find().sort({ order: 1, _id: -1 });
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({message:error.message});
@@ -57,5 +57,14 @@ exports.deleteBlog=async(req,res)=>{
     }
 };
 
-
-
+exports.reorderBlogs = async (req, res) => {
+  const { orderedIds } = req.body;
+  try {
+    for (let i = 0; i < orderedIds.length; i++) {
+      await Blog.findByIdAndUpdate(orderedIds[i], { order: i });
+    }
+    res.status(200).json({ message: "Blogs reordered successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

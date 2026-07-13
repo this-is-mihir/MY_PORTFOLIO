@@ -20,6 +20,10 @@ const blogSchema=new mongoose.Schema({
   description:{
     type:String,
     required:true
+  },
+  order: {
+    type: Number,
+    default: 0
   }
 });
 

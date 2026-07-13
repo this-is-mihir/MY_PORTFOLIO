@@ -13,7 +13,7 @@ import {
   School,
   Layers3,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 import DashboardHome from "./DashboardHome";
 import AddSkill from "./AddSkill";
@@ -35,58 +35,47 @@ export default function AdminDashboard() {
   const handleLogout = () => logout();
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
-    { id: "profile", label: "Profile", icon: <User2 size={20} /> },
-    { id: "education", label: "Education", icon: <School size={20} /> },
-    { id: "experience", label: "Experience", icon: <Layers3 size={20} /> },
-    { id: "skills", label: "Skills", icon: <BookOpen size={20} /> },
-    { id: "certificate", label: "Certificates", icon: <Award size={20} /> },
-    { id: "blog", label: "Blog", icon: <PenSquare size={20} /> },
-    { id: "project", label: "Projects", icon: <Briefcase size={20} /> },
-    { id: "message", label: "Messages", icon: <MessageSquare size={20} /> },
+    { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+    { id: "profile", label: "Profile", icon: <User2 size={18} /> },
+    { id: "education", label: "Education", icon: <School size={18} /> },
+    { id: "experience", label: "Experience", icon: <Layers3 size={18} /> },
+    { id: "skills", label: "Skills", icon: <BookOpen size={18} /> },
+    { id: "certificate", label: "Certificates", icon: <Award size={18} /> },
+    { id: "blog", label: "Blog", icon: <PenSquare size={18} /> },
+    { id: "project", label: "Projects", icon: <Briefcase size={18} /> },
+    { id: "message", label: "Messages", icon: <MessageSquare size={18} /> },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":
-        return <DashboardHome />;
-      case "profile":
-        return <AdminProfile />;
-      case "education":
-        return <EducationManager />;
-      case "experience":
-        return <ExperienceManager />;
-      case "skills":
-        return <AddSkill />;
-      case "certificate":
-        return <AddCertificate />;
-      case "blog":
-        return <AddBlog />;
-      case "project":
-        return <AddProject />;
-      case "message":
-        return <ShowMessages />;
-      default:
-        return <DashboardHome />;
+      case "dashboard": return <DashboardHome />;
+      case "profile": return <AdminProfile />;
+      case "education": return <EducationManager />;
+      case "experience": return <ExperienceManager />;
+      case "skills": return <AddSkill />;
+      case "certificate": return <AddCertificate />;
+      case "blog": return <AddBlog />;
+      case "project": return <AddProject />;
+      case "message": return <ShowMessages />;
+      default: return <DashboardHome />;
     }
   };
 
   const SidebarContent = () => (
-    <>
-      <div className="flex items-center justify-between px-4 py-4 border-b border-indigo-700 flex-shrink-0">
-        <h2 className="text-lg font-bold flex items-center gap-2">
-          <LayoutDashboard size={22} /> Admin Panel
+    <div className="flex flex-col h-full bg-white border-r border-slate-200">
+      <div className="flex items-center justify-between px-6 py-6 border-b border-slate-100 flex-shrink-0">
+        <h2 className="text-xl font-bold flex items-center gap-3 text-slate-800">
+          <div className="w-8 h-8 bg-[#111] rounded-[10px] flex items-center justify-center shadow-sm">
+             <span className="text-white font-bold text-lg tracking-tight" style={{ fontFamily: "'Dancing Script', 'Great Vibes', cursive", paddingTop: "2px" }}>M</span>
+          </div>
+          Admin
         </h2>
-        <button
-          onClick={() => setSidebarOpen(false)}
-          className="md:hidden text-white"
-        >
+        <button onClick={() => setSidebarOpen(false)} className="md:hidden text-slate-500 hover:text-slate-800 transition-colors">
           <X size={22} />
         </button>
       </div>
 
-      {/* nav ko scrollable banaya, taki chhote height par bhi Logout dikhe */}
-      <nav className="mt-4 flex-1 flex flex-col gap-2 px-3 pb-6 overflow-y-auto">
+      <nav className="flex-1 flex flex-col gap-1.5 px-4 py-6 overflow-y-auto">
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -94,10 +83,10 @@ export default function AdminDashboard() {
               setActiveTab(item.id);
               setSidebarOpen(false);
             }}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm md:text-[0.95rem] transition ${
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-all ${
               activeTab === item.id
-                ? "bg-pink-500 text-white shadow-lg"
-                : "hover:bg-white/10"
+                ? "bg-slate-100 text-black shadow-sm"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
             }`}
           >
             {item.icon}
@@ -105,80 +94,84 @@ export default function AdminDashboard() {
           </button>
         ))}
 
-        <button
-          onClick={handleLogout}
-          className="mt-3 flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-white/10 text-sm md:text-[0.95rem] flex-shrink-0"
-        >
-          <LogOut size={20} />
-          Logout
-        </button>
+        <div className="mt-auto pt-6 pb-2">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl transition-colors bg-red-50 text-red-600 hover:bg-red-100 text-[14px] font-medium"
+          >
+            <LogOut size={18} />
+            Logout Session
+          </button>
+        </div>
       </nav>
-    </>
+    </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* 🔹 Top bar – sirf mobile / very small width */}
-      <div className="md:hidden fixed top-0 left-0 w-full z-30 bg-indigo-900 text-white flex items-center justify-between px-4 py-3">
+    <div className="min-h-screen bg-[#fafafa] flex font-sans">
+      {/* Top bar for mobile */}
+      <div className="md:hidden fixed top-0 left-0 w-full z-30 bg-white border-b border-slate-200 text-slate-800 flex items-center justify-between px-4 py-3 shadow-sm">
         <h2 className="font-bold text-lg flex items-center gap-2">
-          <LayoutDashboard size={22} /> Admin
+          <div className="w-7 h-7 bg-black rounded-md flex items-center justify-center">
+             <span className="text-white font-bold text-sm tracking-tight" style={{ fontFamily: "'Dancing Script', 'Great Vibes', cursive", paddingTop:"2px" }}>M</span>
+          </div>
+          Admin
         </h2>
-        <button onClick={() => setSidebarOpen(true)}>
+        <button onClick={() => setSidebarOpen(true)} className="p-1 text-slate-600">
           <Menu size={24} />
         </button>
       </div>
 
-      <div className="flex">
-        {/* 🔹 Desktop sidebar – ab full height + scrollable */}
-        <aside
-          className="hidden md:flex md:flex-col bg-gradient-to-b from-indigo-900 to-purple-900 
-                     text-white w-64 h-screen shadow-xl fixed left-0 top-0 overflow-y-auto"
-        >
-          <SidebarContent />
-        </aside>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block w-[260px] fixed inset-y-0 left-0 z-20">
+        <SidebarContent />
+      </aside>
 
-        {/* 🔹 Mobile overlay sidebar – bhi scrollable */}
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
         {sidebarOpen && (
           <>
-            <div
-              className="fixed inset-0 bg-black/40 z-40 md:hidden"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
             <motion.aside
-              initial={{ x: -260 }}
+              initial={{ x: -280 }}
               animate={{ x: 0 }}
-              exit={{ x: -260 }}
-              transition={{ duration: 0.25 }}
-              className="bg-gradient-to-b from-indigo-900 to-purple-900 text-white 
-                         w-64 h-full max-h-screen fixed left-0 top-0 z-50 shadow-2xl md:hidden
-                         flex flex-col overflow-y-auto"
+              exit={{ x: -280 }}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              className="w-[280px] h-full fixed inset-y-0 left-0 z-50 md:hidden"
             >
               <SidebarContent />
             </motion.aside>
           </>
         )}
+      </AnimatePresence>
 
-        {/* 🔹 Main content area */}
-        <main
-          className="
-            flex-1 
-            w-full
-            pt-20              /* mobile: topbar ke neeche thoda space */
-            md:pt-8           /* tablet / small laptop pe bhi breathing room */
-            lg:pt-10
-            pb-8
-            px-3 sm:px-5 md:px-8 
-            md:ml-64          /* desktop: sidebar width jitna shift */
-          "
-        >
-          <div className="bg-white shadow-md rounded-xl p-4 sm:p-6 md:p-8 max-w-6xl mx-auto">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-800 mb-4 capitalize">
+      {/* Main Content Area */}
+      <main className="flex-1 md:ml-[260px] pt-20 md:pt-10 pb-12 px-4 sm:px-8 md:px-10 lg:px-12 w-full max-w-[1600px] mx-auto">
+        
+        {/* Header */}
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight capitalize">
               {activeTab}
             </h1>
-            <div className="text-gray-700 overflow-x-auto">{renderContent()}</div>
+            <p className="text-sm text-slate-500 mt-1.5">Manage and update your {activeTab} information.</p>
           </div>
-        </main>
-      </div>
+        </div>
+
+        {/* Dynamic View Content */}
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 md:p-8">
+          <div className="text-slate-800 w-full">
+            {renderContent()}
+          </div>
+        </div>
+
+      </main>
     </div>
   );
 }

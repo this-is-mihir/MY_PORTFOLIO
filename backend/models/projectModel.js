@@ -20,8 +20,11 @@ const projectSchema=new mongoose.Schema({
   },
   liveDemoLink:{
     type:String,
-    
   },
+  order: {
+    type: Number,
+    default: 0
+  }
 
 });
 

@@ -7,6 +7,7 @@ const {
   getBlogById,
   updateBlog,
   deleteBlog,
+  reorderBlogs
 } = require("../controllers/blogController");
 
 const router = express.Router();
@@ -21,6 +22,9 @@ router.get("/:id", getBlogById);
 
 // POST /api/blogs  (protected)
 router.post("/", protect, createBlog);
+
+// PUT /api/blogs/reorder/bulk (protected)
+router.put("/reorder/bulk", protect, reorderBlogs);
 
 // PUT /api/blogs/:id  (protected)
 router.put("/:id", protect, updateBlog);

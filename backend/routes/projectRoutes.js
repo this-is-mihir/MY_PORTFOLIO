@@ -6,6 +6,7 @@ const {
   createProject,
   updateProject,
   deleteProject,
+  reorderProjects
 } = require("../controllers/projectController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -20,6 +21,9 @@ router.get("/:id", getProjectById);
 
 // POST /api/projects  (protected)
 router.post("/", protect, createProject);
+
+// PUT /api/projects/reorder/bulk (protected)
+router.put("/reorder/bulk", protect, reorderProjects);
 
 // PUT /api/projects/:id  (protected)
 router.put("/:id", protect, updateProject);

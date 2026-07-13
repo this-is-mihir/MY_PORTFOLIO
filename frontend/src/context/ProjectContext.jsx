@@ -37,6 +37,8 @@ const projectsReducer = (state, action) => {
         projects: state.projects.filter((p) => p._id !== action.payload),
         loading: false,
       };
+    case "REORDER_PROJECTS_SUCCESS":
+      return { ...state, projects: action.payload, loading: false };
     case "ERROR":
       return { ...state, error: action.payload, loading: false };
     default:
@@ -146,6 +148,21 @@ export const ProjectProvider = ({ children }) => {
     }
   };
 
+  // 🔹 REORDER
+  const reorderProjects = async (orderedIds, orderedProjects) => {
+    dispatch({ type: "REORDER_PROJECTS_SUCCESS", payload: orderedProjects });
+    try {
+      await axios.put(
+        `${API_BASE_URL}/api/projects/reorder/bulk`,
+        { orderedIds },
+        getAuthHeader()
+      );
+    } catch (error) {
+      console.error("reorderProjects error:", error);
+      fetchProjects(); // revert on fail
+    }
+  };
+
   return (
     <ProjectContext.Provider
       value={{
@@ -155,6 +172,7 @@ export const ProjectProvider = ({ children }) => {
         createProject,
         updateProject,
         deleteProject,
+        reorderProjects,
       }}
     >
       {children}

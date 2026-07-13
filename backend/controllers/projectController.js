@@ -2,7 +2,7 @@ const Project=require("../models/projectModel");
 
 const getAllProjects=async(req,res)=>{
   try {
-    const projects=await Project.find();
+    const projects=await Project.find().sort({ order: 1, _id: -1 });
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({message:"Error fetching projects"});
@@ -58,10 +58,23 @@ const deleteProject=async(req,res)=>{
   }
 };
 
+const reorderProjects = async (req, res) => {
+  const { orderedIds } = req.body;
+  try {
+    for (let i = 0; i < orderedIds.length; i++) {
+      await Project.findByIdAndUpdate(orderedIds[i], { order: i });
+    }
+    res.status(200).json({ message: "Projects reordered successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error reordering projects" });
+  }
+};
+
 module.exports={
   getAllProjects,
   getProjectById,
   createProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  reorderProjects
 };

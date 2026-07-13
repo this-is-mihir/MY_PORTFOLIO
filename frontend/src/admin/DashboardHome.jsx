@@ -6,6 +6,7 @@ import {
   MessageSquare,
   School,
   Layers3,
+  TrendingUp
 } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { AdminAuthContext } from "../context/AdminAuthContext";
@@ -35,104 +36,61 @@ export default function DashboardHome() {
   }, [admin]);
 
   const cards = [
-    {
-      key: "skills",
-      label: "Skills",
-      value: counts.skills || 0,
-      icon: BookOpen,
-      gradient: "from-[#e6f0ff] to-[#f5f7ff]",
-      iconBg: "bg-[#d0e0ff]",
-    },
-    {
-      key: "projects",
-      label: "Projects",
-      value: counts.projects || 0,
-      icon: Briefcase,
-      gradient: "from-[#e7f7ff] to-[#f5fcff]",
-      iconBg: "bg-[#c9ecff]",
-    },
-    {
-      key: "blogs",
-      label: "Blogs",
-      value: counts.blogs || 0,
-      icon: PenSquare,
-      gradient: "from-[#f7ecff] to-[#fff7ff]",
-      iconBg: "bg-[#e5d2ff]",
-    },
-    {
-      key: "messages",
-      label: "Messages",
-      value: counts.contacts || 0,
-      icon: MessageSquare,
-      gradient: "from-[#e6fff9] to-[#f5fffc]",
-      iconBg: "bg-[#c7f3e6]",
-    },
-    // 👇 NEW – Education
-    {
-      key: "education",
-      label: "Education",
-      value: counts.education || 0,
-      icon: School,
-      gradient: "from-[#fff4e6] to-[#fff9f0]",
-      iconBg: "bg-[#ffe0b8]",
-    },
-    // 👇 NEW – Experience
-    {
-      key: "experience",
-      label: "Experience",
-      value: counts.experience || 0,
-      icon: Layers3,
-      gradient: "from-[#eef7ff] to-[#f7fbff]",
-      iconBg: "bg-[#d6e7ff]",
-    },
+    { key: "projects", label: "Projects", value: counts.projects || 0, icon: Briefcase },
+    { key: "blogs", label: "Blogs", value: counts.blogs || 0, icon: PenSquare },
+    { key: "skills", label: "Skills", value: counts.skills || 0, icon: BookOpen },
+    { key: "experience", label: "Experience", value: counts.experience || 0, icon: Layers3 },
+    { key: "education", label: "Education", value: counts.education || 0, icon: School },
+    { key: "messages", label: "Messages", value: counts.contacts || 0, icon: MessageSquare },
   ];
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 w-full">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-slate-900 tracking-tight">
-        Dashboard Overview
-      </h2>
+    <div className="w-full">
+      <div className="mb-8">
+        <h2 className="text-[17px] font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-black" /> Quick Stats
+        </h2>
+        <p className="text-[13px] text-slate-500 mt-1">Real-time overview of your portfolio data.</p>
+      </div>
 
-      {/* KPI CARDS – pastel style */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6 mb-10">
-        {cards.map(({ key, label, value, icon: Icon, gradient, iconBg }) => (
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
+        {cards.map(({ key, label, value, icon: Icon }, index) => (
           <motion.div
             key={key}
-            whileHover={{ scale: 1.03, y: -2 }}
-            transition={{ type: "spring", stiffness: 220, damping: 18 }}
-            className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${gradient} border border-slate-100 shadow-sm hover:shadow-md cursor-pointer`}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+            className="group bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
           >
-            <div className="flex items-center justify-between px-4 py-4 sm:px-5 sm:py-5">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-slate-500">
-                  {label}
-                </p>
-                <p className="text-2xl sm:text-3xl font-semibold text-slate-900 mt-1">
-                  {value}
-                </p>
-                <p className="text-[11px] sm:text-xs text-slate-400 mt-1">
-                  Total {label.toLowerCase()}
-                </p>
-              </div>
-
-              <div
-                className={`h-10 w-10 sm:h-11 sm:w-11 rounded-2xl ${iconBg} flex items-center justify-center shadow-sm`}
-              >
-                <Icon className="w-5 h-5 text-slate-700" />
+            <div className="flex items-center justify-between mb-4 relative z-10">
+              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-[#111] group-hover:border-[#111] transition-colors duration-300 shadow-sm">
+                <Icon className="w-4 h-4 text-slate-600 group-hover:text-white transition-colors duration-300" />
               </div>
             </div>
+            
+            <div className="relative z-10">
+              <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{value}</h3>
+              <p className="text-[13px] font-medium text-slate-500 mt-1.5">{label}</p>
+            </div>
+
+            {/* Decorative background element */}
+            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-slate-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl" />
           </motion.div>
         ))}
       </div>
 
-      {/* Charts block below */}
       <motion.div
-        initial={{ opacity: 0, y: 25 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 md:p-6"
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="bg-white rounded-[24px] border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] overflow-hidden"
       >
-        <DashboardCharts />
+        <div className="border-b border-slate-50 px-6 py-5 bg-slate-50/30">
+           <h2 className="text-[15px] font-bold text-slate-800 tracking-tight">Analytics Overview</h2>
+        </div>
+        <div className="p-6">
+          <DashboardCharts />
+        </div>
       </motion.div>
     </div>
   );

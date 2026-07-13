@@ -33,6 +33,8 @@ function blogReducer(state, action) {
         blogs: state.blogs.filter((b) => b._id !== action.payload),
         loading: false,
       };
+    case "REORDER_BLOGS_SUCCESS":
+      return { ...state, blogs: action.payload, loading: false };
     case "ERROR":
       return { ...state, error: action.payload, loading: false };
     default:
@@ -135,6 +137,17 @@ export const BlogProvider = ({ children }) => {
     }
   };
 
+  // Reorder blogs (protected)
+  const reorderBlogs = async (orderedIds, orderedBlogs) => {
+    dispatch({ type: "REORDER_BLOGS_SUCCESS", payload: orderedBlogs });
+    try {
+      await axios.put(`${API_BASE_URL}/api/blogs/reorder/bulk`, { orderedIds }, getAuthHeader());
+    } catch (err) {
+      console.error("reorderBlogs error:", err);
+      fetchBlogs(); // revert on fail
+    }
+  };
+
   // load blogs once
   useEffect(() => {
     fetchBlogs();
@@ -150,6 +163,7 @@ export const BlogProvider = ({ children }) => {
         createBlog,
         updateBlog,
         deleteBlog,
+        reorderBlogs,
       }}
     >
       {children}
