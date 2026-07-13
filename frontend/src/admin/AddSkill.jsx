@@ -73,8 +73,7 @@ export default function AddSkill() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-8 items-start">
-        {/* FORM SECTION */}
-        <div className="bg-slate-50 rounded-2xl border border-slate-100 p-6 sticky top-24">
+        <div className="bg-slate-50 rounded-2xl border border-slate-100 p-6 xl:sticky xl:top-24">
           <h3 className="text-[15px] font-bold text-slate-800 mb-6 flex items-center gap-2">
             {editId ? <Edit2 size={18} /> : <Plus size={18} />}
             {editId ? "Edit Skill" : "Add New Skill"}
