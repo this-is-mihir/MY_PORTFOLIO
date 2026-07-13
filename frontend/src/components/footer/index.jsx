@@ -53,7 +53,13 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid gap-8 md:grid-cols-3 text-center md:text-left relative z-10">
         {/* Left - Logo / Name */}
         <div className="space-y-3">
-          <h2 className="logo-script text-[2.4rem] sm:text-[2.7rem] text-slate-900 leading-none">
+          <h2 
+            className="text-[2.4rem] sm:text-[2.7rem] text-slate-900 drop-shadow-sm font-bold leading-none pb-0.5"
+            style={{
+              fontFamily: "'Dancing Script', 'Great Vibes', cursive",
+              letterSpacing: "0.04em",
+            }}
+          >
             Mihir
           </h2>
           <p className="mt-1 text-sm text-slate-500">
@@ -130,7 +136,7 @@ export default function Footer() {
 
       {/* Bottom Copyright */}
       <div className="mt-10 border-t border-slate-200 pt-4 text-center text-xs sm:text-sm text-slate-500 relative z-10">
-        © 2025 Mihir Patel. All Rights Reserved , Privacy Policy , Terms & Conditions
+        © {new Date().getFullYear()} Mihir Patel. All Rights Reserved , Privacy Policy , Terms & Conditions
       </div>
 
       {/* Back to Top Button */}
