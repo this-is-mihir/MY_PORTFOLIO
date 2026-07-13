@@ -56,39 +56,6 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* Right Social Icons (Desktop) */}
-        <div className="hidden md:flex items-center space-x-2 text-slate-700 z-10 flex-shrink-0">
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            href="https://x.com/this_is_mihir"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-full hover:bg-black/5 hover:text-black transition-colors duration-200"
-          >
-            <FaXTwitter size={18} />
-          </motion.a>
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            href="https://www.linkedin.com/in/mihir-patel-a91380289/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-full hover:bg-black/5 hover:text-[#0a66c2] transition-colors duration-200"
-          >
-            <FaLinkedin size={19} />
-          </motion.a>
-          <motion.a
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            href="https://github.com/this-is-mihir"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2.5 rounded-full hover:bg-black/5 hover:text-black transition-colors duration-200"
-          >
-            <FaGithub size={19} />
-          </motion.a>
-        </div>
 
         {/* Mobile Menu Button */}
         <button
@@ -134,32 +101,6 @@ export default function Navbar() {
                 })}
               </ul>
 
-              <div className="flex items-center justify-center space-x-6 pt-4 border-t border-slate-200/60">
-                <a
-                  href="https://x.com/this_is_mihir"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-black/5 hover:bg-black/10 text-slate-800 transition-colors"
-                >
-                  <FaXTwitter size={20} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/mihir-patel-a91380289/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-black/5 hover:bg-black/10 text-[#0a66c2] transition-colors"
-                >
-                  <FaLinkedin size={20} />
-                </a>
-                <a
-                  href="https://github.com/this-is-mihir"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-black/5 hover:bg-black/10 text-slate-800 transition-colors"
-                >
-                  <FaGithub size={20} />
-                </a>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>

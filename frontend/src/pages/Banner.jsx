@@ -298,7 +298,7 @@ export default function Banner() {
               <span className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#111] group-hover:border-white transition-colors text-[#111] group-hover:text-white bg-transparent">
                 <FaPhoneAlt className="w-4 h-4 sm:w-4 sm:h-4" />
               </span>
-              <span className="text-[1.1rem] sm:text-[1.15rem]">Contact Us</span>
+              <span className="text-[1.1rem] sm:text-[1.15rem]">Contact Me</span>
             </Link>
             
             <div className="flex items-center gap-6 pl-4 sm:pl-0">
