@@ -5,6 +5,7 @@ import { useProjects } from "../../hook/allData";
 import Loader from "../../components/Loader";
 
 const StickyProjectCard = ({ project, index, totalProjects, progress }) => {
+
   // Stacking offset: each card sticks a bit lower than the previous one
   const topOffset = 120 + index * 20; 
   
@@ -48,10 +49,19 @@ const StickyProjectCard = ({ project, index, totalProjects, progress }) => {
           </h3>
 
           {/* Description */}
-          <p className="text-slate-500 text-sm sm:text-base mb-8 leading-relaxed font-medium">
-            {project.description
+          <p className="text-slate-500 text-sm sm:text-base mb-8 leading-relaxed font-medium transition-all duration-300">
+            {project.description?.length > 120
               ? `${project.description.slice(0, 120)}...`
-              : ""}
+              : project.description}
+            
+            {project.description?.length > 120 && (
+              <Link
+                to={`/projects/${project._id}`}
+                className="text-indigo-500 hover:text-indigo-600 font-bold ml-2 text-[13px] focus:outline-none tracking-wide"
+              >
+                more
+              </Link>
+            )}
           </p>
 
           {/* Button */}
