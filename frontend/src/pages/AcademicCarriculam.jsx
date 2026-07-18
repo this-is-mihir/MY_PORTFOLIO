@@ -1,14 +1,19 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { FiBriefcase, FiBookOpen, FiCalendar, FiCode, FiAward } from "react-icons/fi";
 
-const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com"; // ⚠️ deploy par change karna
+const API_BASE_URL = "https://portfolio-backend-6wpf.onrender.com";
 
 export default function Curriculum() {
   const [data, setData] = useState({ education: [], experience: [] });
+  const [activeSection, setActiveSection] = useState("experience");
 
-  // ✅ NEW: per-card expand state
+  // State for read more/less
   const [expandedEdu, setExpandedEdu] = useState({});
   const [expandedExp, setExpandedExp] = useState({});
+
+  const eduRef = useRef(null);
+  const expRef = useRef(null);
 
   useEffect(() => {
     const fetchCurriculum = async () => {
@@ -26,247 +31,199 @@ export default function Curriculum() {
     fetchCurriculum();
   }, []);
 
+  // Scroll spy for active section
+  useEffect(() => {
+    const handleScroll = () => {
+      if (eduRef.current && expRef.current) {
+        const eduRect = eduRef.current.getBoundingClientRect();
+        const expRect = expRef.current.getBoundingClientRect();
+
+        // If experience section is closer to top
+        if (expRect.top <= 200 && expRect.bottom > 200) {
+          setActiveSection("experience");
+        } else if (eduRect.top <= 200) {
+          setActiveSection("education");
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollTo = (ref) => {
+    if (ref.current) {
+      const top = ref.current.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
   const { education, experience } = data;
 
-  // ✅ NEW: helper to create preview text
-  const getPreview = (text = "", limit = 140) => {
+  // Helper for text truncation
+  const getPreview = (text = "", limit = 150) => {
     if (!text) return "";
     return text.length > limit ? text.slice(0, limit) + "..." : text;
   };
 
   return (
-    <section
-      id="curriculum"
-      className="relative py-20 bg-gradient-to-b from-slate-50 via-white to-sky-50 text-slate-900 overflow-hidden"
-    >
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
+    <section id="curriculum" className="py-24 bg-white text-slate-900 relative">
+      
+      {/* Background Glows for subtle premium feel */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <motion.div
-          animate={{
-            x: [0, 30, -20, 0],
-            y: [0, -20, 10, 0],
-            opacity: [0.2, 0.35, 0.2],
-          }}
+          animate={{ x: [0, 30, -20, 0], y: [0, -20, 10, 0], opacity: [0.1, 0.2, 0.1] }}
           transition={{ repeat: Infinity, duration: 20, ease: "easeInOut" }}
-          className="absolute -left-16 top-10 w-64 h-64 bg-sky-200 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            x: [0, -25, 25, 0],
-            y: [0, 20, -15, 0],
-            opacity: [0.18, 0.3, 0.18],
-          }}
-          transition={{ repeat: Infinity, duration: 22, ease: "easeInOut" }}
-          className="absolute -right-24 bottom-0 w-72 h-72 bg-indigo-200 rounded-full blur-3xl"
+          className="absolute -left-16 top-10 w-96 h-96 bg-sky-100 rounded-full blur-[100px]"
         />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6">
-        {/* ===== Heading (blog-style) ===== */}
+      <div className="max-w-6xl mx-auto px-6 md:px-12">
+        
+        {/* ===================================== */}
+        {/* ORIGINAL HEADING RESTORED             */}
+        {/* ===================================== */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-14"
+          className="text-center mb-20"
         >
-          <span className="text-[2rem] tracking-[0.1em] uppercase text-slate-500">
+          <span className="text-[1rem] sm:text-[1.2rem] tracking-[0.2em] uppercase text-slate-400 font-semibold">
             Learning Journey & Experience
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold">
+          <h2 className="mt-4 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-800">
             My{" "}
             <span className="bg-gradient-to-r from-sky-500 via-indigo-500 to-sky-700 bg-clip-text text-transparent">
               Curriculum & Experience
             </span>
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-2xl mx-auto">
-            From formal education to hands-on projects – a snapshot of how I&apos;ve
+          <p className="mt-4 text-base sm:text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+            From formal education to hands-on projects – a snapshot of how I've
             been learning, building and growing as a developer.
           </p>
         </motion.div>
 
-        {/* Two Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-14">
-          {/* ===================================== */}
-          {/* LEFT SIDE — EDUCATION */}
-          {/* ===================================== */}
-          <div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-6 text-sky-600 text-left">
-              Education
+        <div className="flex flex-col md:flex-row items-start gap-16 relative">
+        
+        {/* ===================================== */}
+        {/* LEFT SIDEBAR (STICKY INDEX)           */}
+        {/* ===================================== */}
+        <div className="md:w-1/4 md:sticky md:top-32 hidden md:flex flex-col gap-6">
+          <h2 className="text-sm font-bold tracking-[0.2em] uppercase text-slate-400 mb-4">
+            Contents
+          </h2>
+          <button
+            onClick={() => scrollTo(expRef)}
+            className={`flex items-center gap-3 text-left text-lg font-medium transition-colors ${
+              activeSection === "experience" ? "text-black" : "text-slate-400 hover:text-slate-600"
+            }`}
+          >
+            <FiBriefcase className={activeSection === "experience" ? "text-sky-500" : ""} /> Experience
+          </button>
+          <button
+            onClick={() => scrollTo(eduRef)}
+            className={`flex items-center gap-3 text-left text-lg font-medium transition-colors ${
+              activeSection === "education" ? "text-black" : "text-slate-400 hover:text-slate-600"
+            }`}
+          >
+            <FiBookOpen className={activeSection === "education" ? "text-indigo-500" : ""} /> Education
+          </button>
+        </div>
+
+        {/* ===================================== */}
+        {/* RIGHT CONTENT AREA                    */}
+        {/* ===================================== */}
+        <div className="w-full md:w-3/4">
+
+          {/* EXPERIENCE SECTION */}
+          <div ref={expRef} className="mb-24">
+            <h3 className="flex items-center gap-3 text-3xl font-black mb-12 pb-4 border-b-2 border-slate-100 text-slate-800 tracking-tight">
+              <span className="p-3 bg-sky-50 text-sky-500 rounded-xl"><FiBriefcase /></span> Experience
             </h3>
-
-            <div className="relative pl-10 sm:pl-12">
-              {/* Vertical line */}
-              <div className="absolute left-3 sm:left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-sky-400 to-sky-200" />
-
-              {education.map((item, index) => {
-                const key = item._id || index;
-                const fullText = item.details || "";
-                const isExpanded = !!expandedEdu[key];
-                const showToggle = fullText.length > 140;
-
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, delay: index * 0.12 }}
-                    whileHover={{
-                      y: -4,
-                      scale: 1.02,
-                      boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
-                      backgroundColor: "rgba(255,255,255,1)",
-                      borderColor: "rgba(56,189,248,0.7)",
-                    }}
-                    className="relative mb-10"
-                  >
-                    {/* Dot */}
-                    <motion.div
-                      animate={{ scale: [1, 1.18, 1] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                      className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-sky-500 shadow-[0_0_0_6px_rgba(56,189,248,0.25)]"
-                    />
-
-                    {/* Card */}
-                    <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h4 className="text-lg font-semibold">{item.degree}</h4>
-                        <span className="text-xs bg-sky-50 text-sky-700 border border-sky-100 rounded-full px-3 py-1">
-                          {item.year}
-                        </span>
-                      </div>
-                      <p className="font-medium text-slate-600 mt-1">
-                        {item.institution}
-                      </p>
-
-                      {/* moving line */}
-                      <motion.div
-                        className="h-[2px] w-12 bg-gradient-to-r from-sky-500 to-indigo-500 rounded-full my-3"
-                        animate={{ x: [0, 8, 0] }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 1.6,
-                          ease: "easeInOut",
-                        }}
-                      />
-
-                      {/* ✅ Truncated + Read more */}
-                      <p className="text-sm text-slate-600 leading-relaxed">
-                        {isExpanded ? fullText : getPreview(fullText)}
-                      </p>
-
-                      {showToggle && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExpandedEdu((prev) => ({
-                              ...prev,
-                              [key]: !isExpanded,
-                            }))
-                          }
-                          className="mt-2 text-xs sm:text-sm font-semibold text-sky-600 hover:text-sky-700 hover:underline"
-                        >
-                          {isExpanded ? "Read less" : "Read more"}
-                        </button>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ===================================== */}
-          {/* RIGHT SIDE — EXPERIENCE */}
-          {/* ===================================== */}
-          <div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-6 text-indigo-600 text-left">
-              Experience
-            </h3>
-
-            <div className="relative pl-10 sm:pl-12">
-              {/* Vertical line */}
-              <div className="absolute left-3 sm:left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-indigo-400 to-indigo-200" />
-
+            <div className="flex flex-col gap-14">
               {experience.map((exp, index) => {
                 const key = exp._id || index;
                 const fullText = exp.details || "";
                 const isExpanded = !!expandedExp[key];
-                const showToggle = fullText.length > 140;
+                const showToggle = fullText.length > 150;
 
                 return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.55, delay: index * 0.12 }}
-                    whileHover={{
-                      y: -4,
-                      scale: 1.02,
-                      boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
-                      backgroundColor: "rgba(255,255,255,1)",
-                      borderColor: "rgba(129,140,248,0.7)",
-                    }}
-                    className="relative mb-10"
-                  >
-                    {/* Dot */}
-                    <motion.div
-                      animate={{ scale: [1, 1.18, 1] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                      className="absolute left-0 sm:left-1 top-7 w-4 h-4 rounded-full bg-white border-[3px] border-indigo-500 shadow-[0_0_0_6px_rgba(129,140,248,0.25)]"
-                    />
-
-                    {/* Card */}
-                    <div className="ml-6 sm:ml-8 bg-white/95 border border-slate-200 backdrop-blur-lg rounded-2xl px-5 py-5 shadow-[0_12px_25px_rgba(15,23,42,0.08)]">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h4 className="text-lg font-semibold">{exp.title}</h4>
-                        <span className="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full px-3 py-1">
-                          {exp.years}
-                        </span>
-                      </div>
-                      <p className="font-medium text-slate-600 mt-1">
-                        {exp.tech}
-                      </p>
-
-                      {/* moving line */}
-                      <motion.div
-                        className="h-[2px] w-12 bg-gradient-to-r from-indigo-500 to-sky-500 rounded-full my-3"
-                        animate={{ x: [0, 8, 0] }}
-                        transition={{
-                          repeat: Infinity,
-                          duration: 1.6,
-                          ease: "easeInOut",
-                        }}
-                      />
-
-                      {/* ✅ Truncated + Read more */}
-                      <p className="text-sm text-slate-600 leading-relaxed">
-                        {isExpanded ? fullText : getPreview(fullText)}
-                      </p>
-
+                  <div key={key} className="group">
+                    <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-3">
+                      <h4 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-sky-600 transition-colors">
+                        {exp.title}
+                      </h4>
+                      <span className="flex items-center gap-1.5 text-sm font-bold text-sky-500 bg-sky-50 px-3 py-1 rounded-full mt-2 md:mt-0 whitespace-nowrap uppercase tracking-wider">
+                        <FiCalendar className="text-sky-400" /> {exp.years}
+                      </span>
+                    </div>
+                    <p className="flex items-center gap-2 text-lg font-bold text-slate-700 mb-4">
+                      <FiCode className="text-slate-400" /> {exp.tech}
+                    </p>
+                    <p className="text-slate-600 leading-relaxed text-base md:text-lg font-medium">
+                      {isExpanded ? fullText : getPreview(fullText)}
                       {showToggle && (
                         <button
                           type="button"
-                          onClick={() =>
-                            setExpandedExp((prev) => ({
-                              ...prev,
-                              [key]: !isExpanded,
-                            }))
-                          }
-                          className="mt-2 text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
+                          onClick={() => setExpandedExp(prev => ({ ...prev, [key]: !isExpanded }))}
+                          className="ml-2 text-sm font-bold text-sky-500 hover:text-sky-600 hover:underline transition-all"
                         >
-                          {isExpanded ? "Read less" : "Read more"}
+                          {isExpanded ? "Show less" : "Read more"}
                         </button>
                       )}
-                    </div>
-                  </motion.div>
+                    </p>
+                  </div>
                 );
               })}
             </div>
           </div>
+
+          {/* EDUCATION SECTION */}
+          <div ref={eduRef}>
+            <h3 className="flex items-center gap-3 text-3xl font-black mb-12 pb-4 border-b-2 border-slate-100 text-slate-800 tracking-tight">
+              <span className="p-3 bg-indigo-50 text-indigo-500 rounded-xl"><FiBookOpen /></span> Education
+            </h3>
+            <div className="flex flex-col gap-14">
+              {education.map((item, index) => {
+                const key = item._id || index;
+                const fullText = item.details || "";
+                const isExpanded = !!expandedEdu[key];
+                const showToggle = fullText.length > 150;
+
+                return (
+                  <div key={key} className="group">
+                    <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-3">
+                      <h4 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+                        {item.degree}
+                      </h4>
+                      <span className="flex items-center gap-1.5 text-sm font-bold text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full mt-2 md:mt-0 whitespace-nowrap uppercase tracking-wider">
+                        <FiCalendar className="text-indigo-400" /> {item.year}
+                      </span>
+                    </div>
+                    <p className="flex items-center gap-2 text-lg font-bold text-slate-700 mb-4">
+                      <FiAward className="text-slate-400" /> {item.institution}
+                    </p>
+                    <p className="text-slate-600 leading-relaxed text-base md:text-lg font-medium">
+                      {isExpanded ? fullText : getPreview(fullText)}
+                      {showToggle && (
+                        <button
+                          type="button"
+                          onClick={() => setExpandedEdu(prev => ({ ...prev, [key]: !isExpanded }))}
+                          className="ml-2 text-sm font-bold text-indigo-500 hover:text-indigo-600 hover:underline transition-all"
+                        >
+                          {isExpanded ? "Show less" : "Read more"}
+                        </button>
+                      )}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
         </div>
+      </div>
       </div>
     </section>
   );
